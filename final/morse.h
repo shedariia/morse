@@ -19,8 +19,8 @@
 void print_menu(void);
 int check_command(char * tmp, int * argc, char ** argv);
 void free_memory(char ** argv);
-int open_file_for_read(FILE * file_for_read);
-int open_file_for_write(FILE * file_for_write);
+FILE * open_file_for_read(char * file_for_read);
+FILE * open_file_for_write(char * file_for_write);
 int load_cmf_and_print_text(int argc, char ** argv);
 int load_cmf_and_save_text(int argc, char ** argv);
 int load_text_and_print_cmf(int argc, char ** argv);
