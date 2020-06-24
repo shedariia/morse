@@ -1,12 +1,18 @@
 #include "morse.h"
 
+///HAHAHHAHAHAHHA
+
 void main(void)
 {
 	int choise = 0;
 	int argc = 0;
 	char tmp[MAX_LENGTH];
 	char **argv = (char **)malloc((MAX_ARGS_SIZE + 1) * sizeof(char *));
-
+	/*
+	
+	comment
+	
+	*/
 	print_menu();
 
 	do
