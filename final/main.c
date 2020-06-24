@@ -1,5 +1,7 @@
 #include "morse.h"
 
+///HAHAHHAHAHAHHA
+
 void main(void)
 {
 	int choise = 0;
