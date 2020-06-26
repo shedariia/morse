@@ -1,18 +1,14 @@
-#include "morse.h"
+/* LIBRARIES */
+#include "morse.h"	/* check_command(), print_format_name(), ... */
 
-///HAHAHHAHAHAHHA
-
+/* MAIN function */
 void main(void)
 {
 	int choise = 0;
 	int argc = 0;
 	char tmp[MAX_LENGTH];
 	char **argv = (char **)malloc((MAX_ARGS_SIZE + 1) * sizeof(char *));
-	/*
-	
-	comment
-	
-	*/
+
 	print_menu();
 
 	do
