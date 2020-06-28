@@ -16,6 +16,13 @@
 
 #pragma warning (disable: 4996)	/* hide warning for fopen(), fcolse(), ... */
 
+typedef struct morsetree 
+{
+	char symbol;
+	struct morsetree * dashs;
+	struct morsetree * dot;
+} Morsetree;
+
 //	{'A', "* ---"},
 //	{'B', "--- * * *"},
 //	{'C', "--- * --- *"},
@@ -187,5 +194,17 @@ Arguments:
 
 Return value: none */
 void quit(char ** argv);
+
+/* add_symbol_to_tree
+-------------------------------------------------------------------------------
+Description: add one symbol to morse tree structure
+
+Arguments:
+	• tree			- 
+	• morse_code	-
+	• lat_symbol	-
+
+Return value: none */
+void add_symbol_to_tree(Morsetree * tree, char * morse_code, char lat_symbol);
 
 #endif // _MORSE_H

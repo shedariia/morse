@@ -166,3 +166,52 @@ void quit(char ** argv)
 	printf("Goodbay!\n");
 	exit(SUCCESS);
 }
+
+void add_symbol_to_tree(Morsetree * tree, char * morse_code, char lat_symbol)
+{
+	Morsetree * tmp_tree;
+	int i, len;
+
+	tmp_tree = tree;
+	len = strlen(morse_code);
+
+	for (i = 0; i < len; i++)
+	{
+		if (morse_code[i] == '.')
+		{
+			if (tmp_tree->dot == NULL)
+			{
+				// end of tree
+				tmp_tree->dot = morsetree('|');
+			}
+
+			tmp_tree = tmp_tree->dot;
+		}
+		else
+		{
+			if (tmp_tree->dashs == NULL)
+			{
+				// end of tree
+				tmp_tree->dashs = morsetree('|');
+			}
+
+			tmp_tree = tmp_tree->dashs;
+		}
+	}
+
+	tmp_tree->symbol = lat_symbol;
+}
+
+Morsetree * morsetree(char lat_symbol)
+{
+	Morsetree * tree = NULL;
+
+	if ((tree = (Morsetree *)malloc(sizeof(Morsetree))) != NULL)
+	{
+		tree->symbol = lat_symbol;
+		tree->dot = NULL;
+		tree->dashs = NULL;
+	}
+
+	return tree;
+}
