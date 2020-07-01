@@ -1,18 +1,54 @@
-#include "morse.h"
+/* LIBRARIES */
+#include "morse.h"	/* check_command(), print_format_name(), ... */
 
-///HAHAHHAHAHAHHA
-
+/* MAIN function */
 void main(void)
 {
 	int choise = 0;
 	int argc = 0;
 	char tmp[MAX_LENGTH];
 	char **argv = (char **)malloc((MAX_ARGS_SIZE + 1) * sizeof(char *));
-	/*
-	
-	comment
-	
-	*/
+
+	Morsetree *r;
+
+	r = morsetree('|');
+	add_morse(r, ".-", 'A');
+	add_morse(r, "-...", 'B');
+	add_morse(r, "-.-.", 'C');
+	add_morse(r, "-..", 'D');
+	add_morse(r, ".", 'E');
+	add_morse(r, "..-.", 'F');
+	add_morse(r, "--.", 'G');
+	add_morse(r, "....", 'H');
+	add_morse(r, "..", 'I');
+	add_morse(r, ".---", 'J');
+	add_morse(r, "-.-", 'K');
+	add_morse(r, ".-..", 'L');
+	add_morse(r, "--", 'M');
+	add_morse(r, "-.", 'N');
+	add_morse(r, "---", 'O');
+	add_morse(r, ".--.", 'P');
+	add_morse(r, "--.-", 'Q');
+	add_morse(r, ".-.", 'R');
+	add_morse(r, "...", 'S');
+	add_morse(r, "-", 'T');
+	add_morse(r, "..-", 'U');
+	add_morse(r, "...-", 'V');
+	add_morse(r, ".--", 'W');
+	add_morse(r, "-..-", 'X');
+	add_morse(r, "-.--", 'Y');
+	add_morse(r, "--..", 'Z');
+	add_morse(r, "----", '0');
+	add_morse(r, ".----", '1');
+	add_morse(r, "..---", '2');
+	add_morse(r, "...--", '3');
+	add_morse(r, "....-", '4');
+	add_morse(r, ".....", '5');
+	add_morse(r, "-....", '6');
+	add_morse(r, "-...", '7');
+	add_morse(r, "---..", '8');
+	add_morse(r, "----.", '9');
+
 	print_menu();
 
 	do
