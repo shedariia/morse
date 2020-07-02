@@ -92,22 +92,28 @@ FILE *  open_file_for_write(char * filename)
 	return (result);
 }
 
-int load_cmf_and_print_text(int argc, char ** argv)
+//WIP by tamir
+int load_cmf_and_print_text(int argc, char ** argv, Morsetree * tree)
 {
 	FILE * cmf_file = NULL;
 	int result = SUCCESS;
-
+	String buffer = (String) calloc(MAX_CMS_LENGTH * 10, sizeof(char));
+	
 	cmf_file = open_file_for_read(argv[1]);
-
-	/*
-	TODO
-	*/
-
+	
+	if (cmf_file)
+	{
+		translate_cmf(buffer, MAX_CMS_LENGTH, cmf_file, tree);
+		print_cmf(buffer);
+	}
+	
 	fclose(cmf_file);
+	free(buffer);
 
 	return (result);
 }
 
+//WIP by tamir
 int load_cmf_and_save_text(int argc, char ** argv)
 {
 	FILE * cmf_file = NULL, *txt_file = NULL;
@@ -147,10 +153,19 @@ int translate_text_and_print(char * str_txt)
 	return (result);
 }
 
-int translate_cmf_and_print(char * str_cmf)
+int print_cmf(char * str_cmf)
 {
 	int result = SUCCESS;
 
+	if (* str_cmf)
+	{
+		printf("%s", str_cmf);
+	}
+	else
+	{
+		result = FAILURE;
+	}
+	
 	return (result);
 }
 
@@ -182,7 +197,7 @@ void add_symbol_to_tree(Morsetree * tree, char * morse_code, char lat_symbol)
 			if (tmp_tree->dot == NULL)
 			{
 				// end of tree
-				tmp_tree->dot = morsetree('|');
+				tmp_tree->dot = create_morsetree('|');
 			}
 
 			tmp_tree = tmp_tree->dot;
@@ -192,7 +207,7 @@ void add_symbol_to_tree(Morsetree * tree, char * morse_code, char lat_symbol)
 			if (tmp_tree->dashs == NULL)
 			{
 				// end of tree
-				tmp_tree->dashs = morsetree('|');
+				tmp_tree->dashs = create_morsetree('|');
 			}
 
 			tmp_tree = tmp_tree->dashs;
@@ -202,7 +217,7 @@ void add_symbol_to_tree(Morsetree * tree, char * morse_code, char lat_symbol)
 	tmp_tree->symbol = lat_symbol;
 }
 
-Morsetree * morsetree(char lat_symbol)
+Morsetree * create_morsetree(char lat_symbol)
 {
 	Morsetree * tree = NULL;
 
@@ -214,4 +229,87 @@ Morsetree * morsetree(char lat_symbol)
 	}
 
 	return tree;
+}
+
+int read_line(char *buff, int size, FILE *fp)
+{
+	int result = SUCCESS;
+	char *tmp;
+
+	buff[0] = '\0';
+	buff[size - 1] = '\0';             //mark end of buffer
+	
+
+	if (fgets(buff, size, fp) == NULL) {
+		*buff = '\0';                   //EOF 
+		result = FAILURE;
+		return result;
+	}
+	else {
+		/* remove newline */
+		if ((tmp = strrchr(buff, '\n')) != NULL) {
+			*tmp = '\0';
+		}
+	}
+	return result;
+}
+
+char * string_cutter(char *input, char *delimiter) {
+	static char *string;
+	if (input != NULL)
+		string = input;
+
+	if (string == NULL)
+		return string;
+
+	char *end = strstr(string, delimiter);
+	if (end == NULL) {
+		char *temp = string;
+		string = NULL;
+		return temp;
+	}
+
+	char *temp = string;
+
+	*end = '\0';
+	string = end + strlen(delimiter);
+	return temp;
+}
+
+char * translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
+{
+	char line[MAX_CMS_LENGTH];
+	char *word, *q1, *letter, *q2;
+	int i = 0;
+
+	while (read_line(line, size, cmf_file))
+	{
+		// split line into words
+		for (q1 = line; (word = string_cutter(q1, WORD_DEVIDER)) != NULL; q1 = NULL) {
+
+			// split the word into letters
+			for (q2 = word; (letter = string_cutter(q2, LETTER_DEVIDER)) != NULL; q2 = NULL) {
+				// decode the Morse code letter and display it
+
+				buffer[i++] = read_cmc(tree, letter);
+			}
+			buffer[i++] = ' ';
+			
+		}
+		buffer[i++] = '\n'; // ascii line feed after each line
+
+	}
+
+	buffer[i] = '\0';
+}
+
+//WIP
+char read_cmc(Morsetree *tree, char *morse)
+{
+	/*
+	 * You write this code to traverse the tree based on
+	 * the Morse code sequence of dashes and dots. Return
+	 * the letter found at the final node of the tree.
+	 */
+	return '?';
 }

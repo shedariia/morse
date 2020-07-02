@@ -8,13 +8,19 @@
 #define SUCCESS 1				/* exit without errors */
 #define FAILURE 0				/* exit with error */
 #define MAX_LENGTH 255			/* max length of string */
+#define MAX_CMS_LENGTH 1000		/* max length of morse code string in file */
 #define MAX_ARGS_SIZE 2			/* max number of arguments */
 #define NUM_OF_COMM 8			/* number of commands */
+#define WORD_DEVIDER "       " /* seven spaces between words */
+#define LETTER_DEVIDER "   "	/* three spaces between words */
 
 #define _GREEN "\033[1;32m"		/* green color in stdout */
 #define _END "\033[0m"			/* default color in stdout */
 
+
 #pragma warning (disable: 4996)	/* hide warning for fopen(), fcolse(), ... */
+
+typedef char * String;
 
 typedef struct morsetree 
 {
@@ -118,9 +124,10 @@ Description: translate file from code morse and print results to stdout
 Arguments:
 	• argc	- number of substring
 	• argv	- array with value of substrings
+	• tree	- morse tree
 
 Return value: 0 - success, 1 - fail*/
-int load_cmf_and_print_text(int argc, char ** argv);
+int load_cmf_and_print_text(int argc, char ** argv, Morsetree * tree);
 
 /* load_cmf_and_save_text
 -------------------------------------------------------------------------------
@@ -165,7 +172,7 @@ Arguments:
 Return value: 0 - success, 1 - fail*/
 int translate_text_and_print(char * str_txt);
 
-/* translate_cmf_and_print
+/* print_cmf
 -------------------------------------------------------------------------------
 Description: translate string from stdin from code morse
 
@@ -173,7 +180,7 @@ Arguments:
 	• str_cmf	- string with code morse
 
 Return value: 0 - success, 1 - fail*/
-int translate_cmf_and_print(char * str_cmf);
+int print_cmf(char * str_cmf);
 
 /* print_format_name
 -------------------------------------------------------------------------------
@@ -190,6 +197,7 @@ void print_format_name(char * file_name);
 Description: close the programm without errors
 
 Arguments:
+
 	• argv	- array with value of substrings
 
 Return value: none */
@@ -200,11 +208,50 @@ void quit(char ** argv);
 Description: add one symbol to morse tree structure
 
 Arguments:
+
 	• tree			- 
 	• morse_code	-
 	• lat_symbol	-
 
 Return value: none */
 void add_symbol_to_tree(Morsetree * tree, char * morse_code, char lat_symbol);
+
+/* create_morsetree
+-------------------------------------------------------------------------------
+Description: add first symbol to tree structure
+
+Arguments:
+
+	• lat_symbol	-
+
+Return value: none */
+Morsetree * create_morsetree(char lat_symbol);
+
+/* read_line
+-------------------------------------------------------------------------------
+Description: read one line form input file
+
+
+Arguments:
+
+	• buff	- buffer to readed string 
+	• size	- size of buffer
+	• fp	- file stream
+
+Return value: 0 - success, 1 - fail*/
+int read_line(char * buff, int size, FILE * fp);
+
+/*
+*/
+char * string_cutter(char * input, char * delimiter);
+
+/*
+
+*/
+char * translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree);
+/*
+
+*/
+char read_cmc(Morsetree * tree, char * morse);
 
 #endif // _MORSE_H
