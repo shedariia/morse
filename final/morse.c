@@ -92,7 +92,7 @@ FILE *  open_file_for_write(char * filename)
 	return (result);
 }
 
-//WIP by tamir
+//Created by tamir
 int load_cmf_and_print_text(int argc, char ** argv, Morsetree * tree)
 {
 	FILE * cmf_file = NULL;
@@ -104,7 +104,11 @@ int load_cmf_and_print_text(int argc, char ** argv, Morsetree * tree)
 	if (cmf_file)
 	{
 		translate_cmf(buffer, MAX_CMS_LENGTH, cmf_file, tree);
-		print_cmf(buffer);
+		printf("%s", buffer);
+	}
+	else
+	{
+		result = FAILURE;
 	}
 	
 	fclose(cmf_file);
@@ -113,18 +117,25 @@ int load_cmf_and_print_text(int argc, char ** argv, Morsetree * tree)
 	return (result);
 }
 
-//WIP by tamir
-int load_cmf_and_save_text(int argc, char ** argv)
+//Created by tamir
+int load_cmf_and_save_text(int argc, char ** argv, Morsetree * tree)
 {
 	FILE * cmf_file = NULL, *txt_file = NULL;
 	int result = SUCCESS;
+	String buffer = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
 
 	cmf_file = open_file_for_read(argv[1]);
 	txt_file = open_file_for_write(argv[2]);
 
-	/*
-	TODO:
-	*/
+	if (cmf_file)
+	{
+		translate_cmf(buffer, MAX_CMS_LENGTH, cmf_file, tree);
+		fprintf(txt_file, "%s", buffer);
+	}
+	else
+	{
+		result = FAILURE;
+	}
 
 	fclose(cmf_file);
 	fclose(txt_file);
@@ -132,13 +143,20 @@ int load_cmf_and_save_text(int argc, char ** argv)
 	return (result);
 }
 
+//WIP by tamir
 int load_text_and_print_cmf(int argc, char ** argv)
 {
+	FILE * cmf_file = NULL;
 	int result = SUCCESS;
+	String buffer = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
+
+	cmf_file = open_file_for_read(argv[1]);
+
 
 	return (result);
 }
 
+//WIP
 int load_text_and_save_cmf(int argc, char ** argv)
 {
 	int result = SUCCESS;
@@ -153,6 +171,7 @@ int translate_text_and_print(char * str_txt)
 	return (result);
 }
 
+//Depricated
 int print_cmf(char * str_cmf)
 {
 	int result = SUCCESS;
@@ -278,7 +297,7 @@ char * string_cutter(char *input, char *delimiter) {
 
 char * translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
 {
-	char line[MAX_CMS_LENGTH];
+	String line = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
 	char *word, *q1, *letter, *q2;
 	int i = 0;
 
@@ -301,6 +320,52 @@ char * translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
 	}
 
 	buffer[i] = '\0';
+	free(line);
+
+	return (buffer);
+}
+
+//Created by tamir
+//Not tested
+char * translate_txt(String buffer, int size, FILE * cmf_file, String morseLettersArr, String morseDigitsArr) {
+	String line = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
+	char  * lineIterr;
+	int bufferIterr = 0;
+
+	while (!feof(cmf_file))
+	{
+		fgets(line, MAX_CMS_LENGTH, cmf_file);
+		lineIterr = line;
+
+		while (lineIterr != '\0')
+		{
+
+			writeMorseChar(buffer, bufferIterr, lineIterr);
+			lineIterr++;
+		}	
+	}
+
+	free(line);
+	return(buffer);
+}
+
+int writeMorseChar(String buffer, int * bufferIterr, char * morseChar)
+{
+	if (IS_DIGIT(*bufferIterr))
+	{
+		//addStrToStr(buffer, morseChar);
+	}
+	else if (IS_LETTER(*morseChar))
+	{
+		//addStrToStr(buffer, XXX);
+	}
+	else if(IS_SPACE(*morseChar))
+	{
+		addStrToStr(buffer, WORD_DEVIDER);
+	}
+
+	addStrToStr(buffer, LETTER_DEVIDER);
+	bufferIterr += strlen(LETTER_DEVIDER);
 }
 
 //WIP

@@ -13,10 +13,15 @@
 #define NUM_OF_COMM 8			/* number of commands */
 #define WORD_DEVIDER "       " /* seven spaces between words */
 #define LETTER_DEVIDER "   "	/* three spaces between words */
+#define MORSE_DIGIT_OFFSET 48	/* help arrive first cell in digit array */
+#define MORSE_LETTER_OFFSET 65	/* help arrive first cell in letters array */
 
 #define _GREEN "\033[1;32m"		/* green color in stdout */
 #define _END "\033[0m"			/* default color in stdout */
 
+#define IS_DIGIT(X) ( '0' <= (X) && (X) <= '9' ) ? 1 : 0 
+#define IS_LETTER(X) ( 'A' <= (X) && (X) <= 'Z' ) ? 1 : 0
+#define IS_SPACE(X) ( ( X ) == ' ' || ( X ) == '\t' ) ? 1 : 0
 
 #pragma warning (disable: 4996)	/* hide warning for fopen(), fcolse(), ... */
 
@@ -29,42 +34,42 @@ typedef struct morsetree
 	struct morsetree * dot;
 } Morsetree;
 
-//	{'A', "* ---"},
-//	{'B', "--- * * *"},
-//	{'C', "--- * --- *"},
-//	{'D', "--- * *"},
-//	{'E', "*"},
-//	{'F', "* * --- *"},
-//	{'G', "--- --- *"},
-//	{'H', "* * * *"},
-//	{'I', "* *"},
-//	{'J', "* --- --- ---"},
-//	{'K', "--- * ---"},
-//	{'L', "* --- * *"},
-//	{'M', "--- ---"},
-//	{'N', "--- *"},
-//	{'O', "--- --- ---"},
-//	{'P', "* --- --- *"},
-//	{'Q', "--- --- * ---"},
-//	{'R', "* --- *"},
-//	{'S', "* * *"},
-//	{'T', "---"},
-//	{'U', "* * ---"},
-//	{'V', "* * * ---"},
-//	{'W', "* --- ---"},
-//	{'X', "--- * * ---"},
-//	{'Y', "--- * --- ---"},
-//	{'Z', "--- --- * *"},
-//	{'1', "* --- --- --- ---"},
-//	{'2', "* * --- --- ---"},
-//	{'3', "* * * --- ---"},
-//	{'4', "* * * * ---"},
-//	{'5', "* * * * *"},
-//	{'6', "--- * * * *"},
-//	{'7', "--- --- * * *"},
-//	{'8', "--- --- --- * *"},
-//	{'9', "--- --- --- --- *"},
-//	{'0', "--- --- --- --- ---"}
+String morseLettersArr[] = { "* ---",
+							"--- * * *",
+							"--- * --- *",
+							"--- * *",
+							"*",
+							"* * --- *",
+							"--- --- *",
+							"* * * *",
+							"* *",
+							"* --- --- ---",
+							"--- * ---",
+							"* --- * *",
+							"--- ---",
+							"--- *",
+							"--- --- ---",
+							"* --- --- *",
+							"--- --- * ---",
+							"* --- *",
+							"* * *",
+							"---",
+							"* * ---",
+							"* * * ---",
+							"* --- ---",
+							"--- * * ---",
+							"--- * --- ---",
+							"--- --- * *" };
+String morseDigitsArr[] = {"* --- --- --- ---",
+							"* * --- --- ---",
+							"* * * --- ---",
+							"* * * * ---",
+							"* * * * *",
+							"--- * * * *",
+							"--- --- * * *",
+							"--- --- --- * *",
+							"--- --- --- --- *",
+							"--- --- --- --- ---" };
 
 /* print_menu
 -------------------------------------------------------------------------------
@@ -138,7 +143,7 @@ Arguments:
 	• argv	- array with value of substrings
 
 Return value: 0 - success, 1 - fail*/
-int load_cmf_and_save_text(int argc, char ** argv);
+int load_cmf_and_save_text(int argc, char ** argv, Morsetree * tree);
 
 /* load_text_and_print_cmf
 -------------------------------------------------------------------------------
@@ -242,15 +247,66 @@ Return value: 0 - success, 1 - fail*/
 int read_line(char * buff, int size, FILE * fp);
 
 /*
+  string_cutter
+ ----------------------------
+ @Description:
+	A function cut strings before delimeter.
+
+ @Arguments:
+	-input		 - a pointer to the input.
+	-delimiter   - a pointer to the delimetr string.
+
+ @Return value:
+	returns pointer to string after cutting.
 */
 char * string_cutter(char * input, char * delimiter);
 
 /*
+  translate_cmf
+ ----------------------------
+ @Description:
+	A function taranslate morse code from file to text.
+ @Arguments:
+	-buffer		- a pointer to buffer with text.
+	-size		- a max size of buffer.
+	-cmf-file	- a pointer to file with morse code.
+	-tree		-a pointer Morse tree.
 
+ @Return value:
+	returns Pointer to buffer with text.
 */
 char * translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree);
-/*
 
+/*
+  translate_cmf
+ ----------------------------
+ @Description:
+	A function translate from text file to morse code.
+
+ @Arguments:
+	-buffer			- a pointer to buffer with text.
+	-size			- a max size of buffer.
+	-cmf-file		- a pointer to file with morse code.
+	-morseLettersArr	-a pointer to array with letters.
+	-morseDigitsArr		-a pointer to array with digits.
+
+ @Return value:
+	returns Pointer to buffer with text.
+*/
+char * translate_txt(String buffer, int size, FILE * cmf_file, String morseLettersArr, String morseDigitsArr);
+
+/*
+  read_cmc
+ ----------------------------
+ @Description:
+	This funnction translate morse character to text.
+
+ @Arguments:
+	-morse	-a pointer to String morse character representation.
+	-tree	-a point Morse tree.
+
+ @Return value:
+	returns character text.
 */
 char read_cmc(Morsetree * tree, char * morse);
 

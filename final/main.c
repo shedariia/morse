@@ -64,7 +64,7 @@ void main(void)
 			load_cmf_and_print_text(argc, argv, tree);
 			break;
 		case 1:
-			load_cmf_and_save_text(argc, argv);
+			load_cmf_and_save_text(argc, argv, tree);
 			break;
 		case 2:
 			load_text_and_print_cmf(argc, argv);
