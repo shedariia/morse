@@ -7,53 +7,53 @@ void main(void)
 	int choise = 0;
 	int argc = 0;
 	char tmp[MAX_LENGTH];
-	char **argv = (char **)malloc((MAX_ARGS_SIZE + 1) * sizeof(char *));
+	char **argv = (char **)calloc(MAX_ARGS_SIZE + 1, sizeof(char *));
 
-	Morsetree *r;
+	Morsetree *tree;
 
-	r = morsetree('|');
-	add_morse(r, ".-", 'A');
-	add_morse(r, "-...", 'B');
-	add_morse(r, "-.-.", 'C');
-	add_morse(r, "-..", 'D');
-	add_morse(r, ".", 'E');
-	add_morse(r, "..-.", 'F');
-	add_morse(r, "--.", 'G');
-	add_morse(r, "....", 'H');
-	add_morse(r, "..", 'I');
-	add_morse(r, ".---", 'J');
-	add_morse(r, "-.-", 'K');
-	add_morse(r, ".-..", 'L');
-	add_morse(r, "--", 'M');
-	add_morse(r, "-.", 'N');
-	add_morse(r, "---", 'O');
-	add_morse(r, ".--.", 'P');
-	add_morse(r, "--.-", 'Q');
-	add_morse(r, ".-.", 'R');
-	add_morse(r, "...", 'S');
-	add_morse(r, "-", 'T');
-	add_morse(r, "..-", 'U');
-	add_morse(r, "...-", 'V');
-	add_morse(r, ".--", 'W');
-	add_morse(r, "-..-", 'X');
-	add_morse(r, "-.--", 'Y');
-	add_morse(r, "--..", 'Z');
-	add_morse(r, "----", '0');
-	add_morse(r, ".----", '1');
-	add_morse(r, "..---", '2');
-	add_morse(r, "...--", '3');
-	add_morse(r, "....-", '4');
-	add_morse(r, ".....", '5');
-	add_morse(r, "-....", '6');
-	add_morse(r, "-...", '7');
-	add_morse(r, "---..", '8');
-	add_morse(r, "----.", '9');
+	tree = create_morsetree('|');
+	add_symbol_to_tree(tree, "*-", 'A');
+	add_symbol_to_tree(tree, "-***", 'B');
+	add_symbol_to_tree(tree, "-*-*", 'C');
+	add_symbol_to_tree(tree, "-**", 'D');
+	add_symbol_to_tree(tree, "*", 'E');
+	add_symbol_to_tree(tree, "**-*", 'F');
+	add_symbol_to_tree(tree, "--*", 'G');
+	add_symbol_to_tree(tree, "****", 'H');
+	add_symbol_to_tree(tree, "**", 'I');
+	add_symbol_to_tree(tree, "*---", 'J');
+	add_symbol_to_tree(tree, "-*-", 'K');
+	add_symbol_to_tree(tree, "*-**", 'L');
+	add_symbol_to_tree(tree, "--", 'M');
+	add_symbol_to_tree(tree, "-*", 'N');
+	add_symbol_to_tree(tree, "---", 'O');
+	add_symbol_to_tree(tree, "*--*", 'P');
+	add_symbol_to_tree(tree, "--*-", 'Q');
+	add_symbol_to_tree(tree, "*-*", 'R');
+	add_symbol_to_tree(tree, "***", 'S');
+	add_symbol_to_tree(tree, "-", 'T');
+	add_symbol_to_tree(tree, "**-", 'U');
+	add_symbol_to_tree(tree, "***-", 'V');
+	add_symbol_to_tree(tree, "*--", 'W');
+	add_symbol_to_tree(tree, "-**-", 'X');
+	add_symbol_to_tree(tree, "-*--", 'Y');
+	add_symbol_to_tree(tree, "--**", 'Z');
+	add_symbol_to_tree(tree, "----", '0');
+	add_symbol_to_tree(tree, "*----", '1');
+	add_symbol_to_tree(tree, "**---", '2');
+	add_symbol_to_tree(tree, "***--", '3');
+	add_symbol_to_tree(tree, "****-", '4');
+	add_symbol_to_tree(tree, "*****", '5');
+	add_symbol_to_tree(tree, "-****", '6');
+	add_symbol_to_tree(tree, "-***", '7');
+	add_symbol_to_tree(tree, "---**", '8');
+	add_symbol_to_tree(tree, "----*", '9');
 
 	print_menu();
 
 	do
 	{
-		printf("--> ");
+		printf("\n--> ");
 		gets(tmp);
 
 		choise = check_command(tmp, &argc, argv);
@@ -61,10 +61,10 @@ void main(void)
 		switch (choise)
 		{
 		case 0:
-			load_cmf_and_print_text(argc, argv);
+			load_cmf_and_print_text(argc, argv, tree);
 			break;
 		case 1:
-			load_cmf_and_save_text(argc, argv);
+			load_cmf_and_save_text(argc, argv, tree);
 			break;
 		case 2:
 			load_text_and_print_cmf(argc, argv);
@@ -76,13 +76,13 @@ void main(void)
 			translate_text_and_print(argv[1]);
 			break;
 		case 5:
-			translate_cmf_and_print(argv[1]);
+			print_cmf(argv[1]);
 			break;
 		case 6:
 			print_format_name(argv[1]);
 			break;
 		case 7:
-			quit(argv);
+			quit(argc, argv);
 			break;
 		default:
 			printf("...error\n");
