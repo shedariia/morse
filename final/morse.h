@@ -34,43 +34,6 @@ typedef struct morsetree
 	struct morsetree * dot;
 } Morsetree;
 
-String morseLettersArr[] = { "* ---",
-							"--- * * *",
-							"--- * --- *",
-							"--- * *",
-							"*",
-							"* * --- *",
-							"--- --- *",
-							"* * * *",
-							"* *",
-							"* --- --- ---",
-							"--- * ---",
-							"* --- * *",
-							"--- ---",
-							"--- *",
-							"--- --- ---",
-							"* --- --- *",
-							"--- --- * ---",
-							"* --- *",
-							"* * *",
-							"---",
-							"* * ---",
-							"* * * ---",
-							"* --- ---",
-							"--- * * ---",
-							"--- * --- ---",
-							"--- --- * *" };
-String morseDigitsArr[] = {"* --- --- --- ---",
-							"* * --- --- ---",
-							"* * * --- ---",
-							"* * * * ---",
-							"* * * * *",
-							"--- * * * *",
-							"--- --- * * *",
-							"--- --- --- * *",
-							"--- --- --- --- *",
-							"--- --- --- --- ---" };
-
 /* print_menu
 -------------------------------------------------------------------------------
 Description: prints all commands to stdout
@@ -97,10 +60,11 @@ int check_command(char * tmp, int * argc, char ** argv);
 Description: free allocated memory
 
 Arguments:
+	• argc	- number of substring
 	• argv	- array with value of substrings
 
 Return value: none */
-void free_memory(char ** argv);
+void free_memory(int argc, char ** argv);
 
 /* open_file_for_read
 -------------------------------------------------------------------------------
@@ -202,11 +166,11 @@ void print_format_name(char * file_name);
 Description: close the programm without errors
 
 Arguments:
-
+	• argc	- number of substring
 	• argv	- array with value of substrings
 
 Return value: none */
-void quit(char ** argv);
+void quit(int argc, char ** argv);
 
 /* add_symbol_to_tree
 -------------------------------------------------------------------------------
@@ -309,5 +273,12 @@ char * translate_txt(String buffer, int size, FILE * cmf_file, String morseLette
 	returns character text.
 */
 char read_cmc(Morsetree * tree, char * morse);
+
+
+void writeMorseChar(String buffer, int * bufferIterr, char * morseChar);
+
+void addStrToStr(String buffer, char * deliver);
+
+char *gets(char *str);
 
 #endif // _MORSE_H

@@ -1,6 +1,6 @@
 #include "morse.h"
 
-const char * commands[8] = { "load_cmf_and_print_text",
+const String commands[8] = { "load_cmf_and_print_text",
 								"load_cmf_and_save_text",
 								"load_text_and_print_cmf",
 								"load_text_and_save_cmf",
@@ -8,6 +8,42 @@ const char * commands[8] = { "load_cmf_and_print_text",
 								"translate_cmf_and_print",
 								"print_format_name",
 								"quit:" };
+const String morseLettersArr[] = { "* ---",
+							"--- * * *",
+							"--- * --- *",
+							"--- * *",
+							"*",
+							"* * --- *",
+							"--- --- *",
+							"* * * *",
+							"* *",
+							"* --- --- ---",
+							"--- * ---",
+							"* --- * *",
+							"--- ---",
+							"--- *",
+							"--- --- ---",
+							"* --- --- *",
+							"--- --- * ---",
+							"* --- *",
+							"* * *",
+							"---",
+							"* * ---",
+							"* * * ---",
+							"* --- ---",
+							"--- * * ---",
+							"--- * --- ---",
+							"--- --- * *" };
+const String morseDigitsArr[] = { "* --- --- --- ---",
+							"* * --- --- ---",
+							"* * * --- ---",
+							"* * * * ---",
+							"* * * * *",
+							"--- * * * *",
+							"--- --- * * *",
+							"--- --- --- * *",
+							"--- --- --- --- *",
+							"--- --- --- --- ---" };
 
 void print_menu(void)
 {
@@ -62,11 +98,11 @@ int check_command(char * tmp, int * argc, char ** argv)
 	return (choise);
 }
 
-void free_memory(char ** argv)
+void free_memory(int argc, char ** argv)
 {
 	int i;
 
-	for (i = 0; i <= MAX_ARGS_SIZE; ++i)
+	for (i = 0; i < argc; ++i)
 	{
 		free(argv[i]);
 	}
@@ -96,22 +132,25 @@ FILE *  open_file_for_write(char * filename)
 int load_cmf_and_print_text(int argc, char ** argv, Morsetree * tree)
 {
 	FILE * cmf_file = NULL;
-	int result = SUCCESS;
-	String buffer = (String) calloc(MAX_CMS_LENGTH * 10, sizeof(char));
+	int result = FAILURE;
+	String buffer = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
 	
-	cmf_file = open_file_for_read(argv[1]);
-	
-	if (cmf_file)
+	if (argc == 2)
 	{
-		translate_cmf(buffer, MAX_CMS_LENGTH, cmf_file, tree);
-		printf("%s", buffer);
+		if (cmf_file = open_file_for_read(argv[1]))
+		{
+			translate_cmf(buffer, MAX_CMS_LENGTH, cmf_file, tree);
+			printf("%s", buffer);
+			fclose(cmf_file);
+		}
+
+		result = SUCCESS;
 	}
 	else
 	{
-		result = FAILURE;
+		printf("You must enter one argument\n");
 	}
 	
-	fclose(cmf_file);
 	free(buffer);
 
 	return (result);
@@ -121,24 +160,27 @@ int load_cmf_and_print_text(int argc, char ** argv, Morsetree * tree)
 int load_cmf_and_save_text(int argc, char ** argv, Morsetree * tree)
 {
 	FILE * cmf_file = NULL, *txt_file = NULL;
-	int result = SUCCESS;
+	int result = FAILURE;
 	String buffer = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
 
-	cmf_file = open_file_for_read(argv[1]);
-	txt_file = open_file_for_write(argv[2]);
-
-	if (cmf_file)
+	if (argc == 3)
 	{
-		translate_cmf(buffer, MAX_CMS_LENGTH, cmf_file, tree);
-		fprintf(txt_file, "%s", buffer);
+		cmf_file = open_file_for_read(argv[1]);
+		txt_file = open_file_for_write(argv[2]);
+
+		if (cmf_file)
+		{
+			translate_cmf(buffer, MAX_CMS_LENGTH, cmf_file, tree);
+			fprintf(txt_file, "%s", buffer);
+			result = SUCCESS;
+			fclose(cmf_file);
+			fclose(txt_file);
+		}
 	}
 	else
 	{
-		result = FAILURE;
+		printf("You must enter two arguments\n");
 	}
-
-	fclose(cmf_file);
-	fclose(txt_file);
 
 	return (result);
 }
@@ -147,11 +189,27 @@ int load_cmf_and_save_text(int argc, char ** argv, Morsetree * tree)
 int load_text_and_print_cmf(int argc, char ** argv)
 {
 	FILE * cmf_file = NULL;
-	int result = SUCCESS;
+	int result = FAILURE;
 	String buffer = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
 
-	cmf_file = open_file_for_read(argv[1]);
+	if (argc == 2)
+	{
+		cmf_file = open_file_for_read(argv[1]);
 
+		if (cmf_file)
+		{
+			/* 
+				TODO 
+			*/
+
+			result = SUCCESS;
+			fclose(cmf_file);
+		}
+	}
+	else
+	{
+		printf("You must enter one argument\n");
+	}
 
 	return (result);
 }
@@ -174,28 +232,48 @@ int translate_text_and_print(char * str_txt)
 //Depricated
 int print_cmf(char * str_cmf)
 {
-	int result = SUCCESS;
+	int result = FAILURE;
 
-	if (* str_cmf)
+	if (*str_cmf)
 	{
 		printf("%s", str_cmf);
+		result = SUCCESS;
 	}
-	else
-	{
-		result = FAILURE;
-	}
-	
+
 	return (result);
 }
 
+// done
 void print_format_name(char * file_name)
 {
-
+	if (file_name != NULL)
+	{
+		if (strstr(file_name, ".cmf"))
+		{
+			printf("File format: \"cmf\" code morse\n");
+		}
+		else
+		{
+			if (strstr(file_name, ".txt"))
+			{
+				printf("File format: \"txt\" text\n");
+			}
+			else
+			{
+				printf("File format not valid\n");
+			}
+		}
+	}
+	else
+	{
+		printf("You must enter name of file\n");
+	}
 }
 
-void quit(char ** argv)
+// done
+void quit(int argc, char ** argv)
 {
-	free_memory(argv);
+	free_memory(argc, argv);
 
 	printf("Goodbay!\n");
 	exit(SUCCESS);
@@ -211,7 +289,7 @@ void add_symbol_to_tree(Morsetree * tree, char * morse_code, char lat_symbol)
 
 	for (i = 0; i < len; i++)
 	{
-		if (morse_code[i] == '.')
+		if (morse_code[i] == '*')
 		{
 			if (tmp_tree->dot == NULL)
 			{
@@ -340,7 +418,7 @@ char * translate_txt(String buffer, int size, FILE * cmf_file, String morseLette
 		while (lineIterr != '\0')
 		{
 
-			writeMorseChar(buffer, bufferIterr, lineIterr);
+			writeMorseChar(buffer, &bufferIterr, lineIterr);
 			lineIterr++;
 		}	
 	}
@@ -349,7 +427,14 @@ char * translate_txt(String buffer, int size, FILE * cmf_file, String morseLette
 	return(buffer);
 }
 
-int writeMorseChar(String buffer, int * bufferIterr, char * morseChar)
+void addStrToStr(String buffer, char * deliver)
+{
+	/*
+		TODO
+	*/
+}
+
+void writeMorseChar(String buffer, int * bufferIterr, char * morseChar)
 {
 	if (IS_DIGIT(*bufferIterr))
 	{
