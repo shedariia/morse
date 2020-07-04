@@ -274,11 +274,13 @@ char * translate_txt(String buffer, int size, FILE * cmf_file, String morseLette
 */
 char read_cmc(Morsetree * tree, char * morse);
 
-
+// TODO
 void writeMorseChar(String buffer, int * bufferIterr, char * morseChar);
 
+// TODO
 void addStrToStr(String buffer, char * deliver);
 
+// TODO
 char *gets(char *str);
 
 #endif // _MORSE_H

@@ -45,6 +45,7 @@ const String morseDigitsArr[] = { "* --- --- --- ---",
 							"--- --- --- --- *",
 							"--- --- --- --- ---" };
 
+// done
 void print_menu(void)
 {
 	printf("\t--------------------------------------------------------------------\n");
@@ -70,6 +71,7 @@ void print_menu(void)
 	printf("\t--------------------------------------------------------------------\n");
 }
 
+// done
 int check_command(char * tmp, int * argc, char ** argv)
 {
 	int i = 0, choise = -1;
@@ -98,6 +100,7 @@ int check_command(char * tmp, int * argc, char ** argv)
 	return (choise);
 }
 
+// done
 void free_memory(int argc, char ** argv)
 {
 	int i;
@@ -110,6 +113,7 @@ void free_memory(int argc, char ** argv)
 	free(argv);
 }
 
+// done
 FILE * open_file_for_read(char * filename)
 {
 	FILE * result = NULL;
@@ -119,6 +123,7 @@ FILE * open_file_for_read(char * filename)
 	return (result);
 }
 
+// done
 FILE *  open_file_for_write(char * filename)
 {
 	FILE * result = NULL;
@@ -128,7 +133,7 @@ FILE *  open_file_for_write(char * filename)
 	return (result);
 }
 
-//Created by tamir
+// done
 int load_cmf_and_print_text(int argc, char ** argv, Morsetree * tree)
 {
 	FILE * cmf_file = NULL;
@@ -156,7 +161,7 @@ int load_cmf_and_print_text(int argc, char ** argv, Morsetree * tree)
 	return (result);
 }
 
-//Created by tamir
+// done
 int load_cmf_and_save_text(int argc, char ** argv, Morsetree * tree)
 {
 	FILE * cmf_file = NULL, *txt_file = NULL;
@@ -185,7 +190,7 @@ int load_cmf_and_save_text(int argc, char ** argv, Morsetree * tree)
 	return (result);
 }
 
-//WIP by tamir
+// TODO, WIP by tamir
 int load_text_and_print_cmf(int argc, char ** argv)
 {
 	FILE * cmf_file = NULL;
@@ -214,7 +219,7 @@ int load_text_and_print_cmf(int argc, char ** argv)
 	return (result);
 }
 
-//WIP
+// TODO, WIP by tamir
 int load_text_and_save_cmf(int argc, char ** argv)
 {
 	int result = SUCCESS;
@@ -222,6 +227,7 @@ int load_text_and_save_cmf(int argc, char ** argv)
 	return (result);
 }
 
+// TODO
 int translate_text_and_print(char * str_txt)
 {
 	int result = SUCCESS;
@@ -229,7 +235,7 @@ int translate_text_and_print(char * str_txt)
 	return (result);
 }
 
-//Depricated
+// TODO, Depricated
 int print_cmf(char * str_cmf)
 {
 	int result = FAILURE;
@@ -279,6 +285,7 @@ void quit(int argc, char ** argv)
 	exit(SUCCESS);
 }
 
+// done
 void add_symbol_to_tree(Morsetree * tree, char * morse_code, char lat_symbol)
 {
 	Morsetree * tmp_tree;
@@ -314,6 +321,7 @@ void add_symbol_to_tree(Morsetree * tree, char * morse_code, char lat_symbol)
 	tmp_tree->symbol = lat_symbol;
 }
 
+// done
 Morsetree * create_morsetree(char lat_symbol)
 {
 	Morsetree * tree = NULL;
@@ -328,6 +336,7 @@ Morsetree * create_morsetree(char lat_symbol)
 	return tree;
 }
 
+// done
 int read_line(char *buff, int size, FILE *fp)
 {
 	int result = SUCCESS;
@@ -337,21 +346,25 @@ int read_line(char *buff, int size, FILE *fp)
 	buff[size - 1] = '\0';             //mark end of buffer
 	
 
-	if (fgets(buff, size, fp) == NULL) {
+	if (fgets(buff, size, fp) == NULL) 
+	{
 		*buff = '\0';                   //EOF 
 		result = FAILURE;
 		return result;
 	}
 	else {
 		/* remove newline */
-		if ((tmp = strrchr(buff, '\n')) != NULL) {
+		if ((tmp = strrchr(buff, '\n')) != NULL) 
+		{
 			*tmp = '\0';
 		}
 	}
 	return result;
 }
 
-char * string_cutter(char *input, char *delimiter) {
+// PROBLEM
+char * string_cutter(char *input, char *delimiter) 
+{
 	static char *string;
 	if (input != NULL)
 		string = input;
@@ -360,12 +373,14 @@ char * string_cutter(char *input, char *delimiter) {
 		return string;
 
 	char *end = strstr(string, delimiter);
-	if (end == NULL) {
+	if (end == NULL) 
+	{
 		char *temp = string;
 		string = NULL;
 		return temp;
 	}
 
+	// TODO ..........this is problem.........
 	char *temp = string;
 
 	*end = '\0';
@@ -373,6 +388,7 @@ char * string_cutter(char *input, char *delimiter) {
 	return temp;
 }
 
+// done
 char * translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
 {
 	String line = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
@@ -382,10 +398,12 @@ char * translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
 	while (read_line(line, size, cmf_file))
 	{
 		// split line into words
-		for (q1 = line; (word = string_cutter(q1, WORD_DEVIDER)) != NULL; q1 = NULL) {
+		for (q1 = line; (word = string_cutter(q1, WORD_DEVIDER)) != NULL; q1 = NULL)
+		{
 
 			// split the word into letters
-			for (q2 = word; (letter = string_cutter(q2, LETTER_DEVIDER)) != NULL; q2 = NULL) {
+			for (q2 = word; (letter = string_cutter(q2, LETTER_DEVIDER)) != NULL; q2 = NULL)
+			{
 				// decode the Morse code letter and display it
 
 				buffer[i++] = read_cmc(tree, letter);
@@ -405,7 +423,8 @@ char * translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
 
 //Created by tamir
 //Not tested
-char * translate_txt(String buffer, int size, FILE * cmf_file, String morseLettersArr, String morseDigitsArr) {
+char * translate_txt(String buffer, int size, FILE * cmf_file, String morseLettersArr, String morseDigitsArr)
+{
 	String line = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
 	char  * lineIterr;
 	int bufferIterr = 0;
@@ -427,6 +446,7 @@ char * translate_txt(String buffer, int size, FILE * cmf_file, String morseLette
 	return(buffer);
 }
 
+// TODO
 void addStrToStr(String buffer, char * deliver)
 {
 	/*
@@ -434,6 +454,7 @@ void addStrToStr(String buffer, char * deliver)
 	*/
 }
 
+// TODO
 void writeMorseChar(String buffer, int * bufferIterr, char * morseChar)
 {
 	if (IS_DIGIT(*bufferIterr))
@@ -453,13 +474,38 @@ void writeMorseChar(String buffer, int * bufferIterr, char * morseChar)
 	bufferIterr += strlen(LETTER_DEVIDER);
 }
 
-//WIP
+// done
 char read_cmc(Morsetree *tree, char *morse)
 {
-	/*
-	 * You write this code to traverse the tree based on
-	 * the Morse code sequence of dashes and dots. Return
-	 * the letter found at the final node of the tree.
-	 */
-	return '?';
+	Morsetree * curr = tree;
+	char symbol;
+
+	while (*morse)
+	{
+		if (*morse == '*')
+		{
+			if (*(++morse) == ' ')
+			{
+				morse++;
+			}
+
+			curr = curr->dot;
+		}
+		else
+		{
+			if (*morse == '-' && *(++morse) == '-' && *(++morse) == '-')
+			{
+				if (*(++morse) == ' ')
+				{
+					morse++;
+				}
+
+				curr = curr->dashs;
+			}
+		}
+	}
+
+	symbol = curr->symbol;
+
+	return (symbol);
 }
