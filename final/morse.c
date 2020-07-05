@@ -74,26 +74,62 @@ void print_menu(void)
 // done
 int check_command(char * tmp, int * argc, char ** argv)
 {
-	int i = 0, choise = -1;
+	int size = 0;
+	int i = 0, j = 0, choise = -1;
 	char *token;
 
 	token = strtok(tmp, " ");
 
-	while (token != NULL && i <= MAX_ARGS_SIZE)
+	/* check command */
+	argv[i] = (char *)malloc((strlen(token) + 1) * sizeof(char));
+	strcpy(argv[0], token);
+	token = strtok(NULL, " ");
+	++i;
+
+	for (j = 0; j < NUM_OF_COMM && choise == -1; ++j)
 	{
-		argv[i] = (char *)malloc((strlen(token) + 1) * sizeof(char));
-		strcpy(argv[i], token);
-		token = strtok(NULL, " ");
-		++i;
+		if (!strcmp(argv[0], commands[j]))
+		{
+			choise = j;
+		}
 	}
 
-	*argc = i;
-
-	for (i = 0; i < NUM_OF_COMM; ++i)
+	if (choise == 4)
 	{
-		if (!strcmp(argv[0], commands[i]))
+		size = strlen(token);
+		argv[1] = (char *)malloc((size + 1) * sizeof(char));
+		argv[1] = strcpy(argv[1], "");
+
+		while (token != NULL)
 		{
-			choise = i;
+			size += strlen(token) + 1;
+			argv[1] = (char *)realloc(argv[1], size + 1);
+			argv[1] = strcat(argv[1], token);
+			argv[1] = strcat(argv[1], " ");
+			token = strtok(NULL, " ");
+		}
+	}
+	else
+	{
+		if (choise == 5)
+		{
+			argv[1] = (char *)malloc(MAX_CMS_LENGTH * sizeof(char));
+			argv[1] = strcpy(argv[1], token);
+			argv[1] = strcat(argv[1], " ");
+			token = strtok(NULL, "\0");
+			argv[1] = strcat(argv[1], token);
+		}
+		else
+		{
+			while (token != NULL && i <= MAX_ARGS_SIZE)
+			{
+				argv[i] = (char *)malloc((strlen(token) + 1) * sizeof(char));
+				strcpy(argv[i], token);
+				token = strtok(NULL, " ");
+				++i;
+			}
+
+			*argc = i;
 		}
 	}
 

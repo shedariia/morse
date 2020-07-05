@@ -75,10 +75,12 @@ void main(void)
 		case 4:
 			// TODO: input with spaces
 			translate_text_and_print(argv[1]);
+			free_memory(argc, argv);
 			break;
 		case 5:
 			// TODO: input with spaces
 			print_cmf(argv[1]);
+			free_memory(argc, argv);
 			break;
 		case 6:
 			print_format_name(argv[1]);
