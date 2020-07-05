@@ -7,7 +7,7 @@ void main(void)
 	int choise = 0;
 	int argc = 0;
 	char tmp[MAX_LENGTH];
-	char **argv = (char **)calloc(MAX_ARGS_SIZE + 1, sizeof(char *));
+	char **argv = (char **)calloc(MAX_ARGS_SIZE + 1, sizeof(String));
 
 	Morsetree *tree;
 
@@ -74,11 +74,11 @@ void main(void)
 			break;
 		case 4:
 			translate_text_and_print(argv[1]);
-			free_memory(argc, argv);
+			//free_memory(argc, argv);
 			break;
 		case 5:
 			print_cmf(argv[1]);
-			free_memory(argc, argv);
+			//free_memory(argc, argv);
 			break;
 		case 6:
 			print_format_name(argv[1]);

@@ -48,12 +48,12 @@ void print_menu(void);
 Description: check command validation
 
 Arguments:
-	• tmp	- full string from user
-	• argc	- number of substring
-	• argv	- array with value of substrings
+	• sdtin_line	- full string from user
+	• argc			- number of substring
+	• argv			- array with value of substrings
 
 Return value: number of command or -1 if command not found */
-int check_command(char * tmp, int * argc, char ** argv);
+int check_command(String  sdtin_line, int * argc, char ** argv);
 
 /* free_memory
 -------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ Arguments:
 	• file_for_read	- file's name
 
 Return value: pointer to openned file for reading */
-FILE * open_file_for_read(char * file_for_read);
+FILE * open_file_for_read(String  file_for_read);
 
 /* open_file_for_write
 -------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ Arguments:
 	• file_for_write	- file's name
 
 Return value: pointer to openned file for writing */
-FILE * open_file_for_write(char * file_for_write);
+FILE * open_file_for_write(String  file_for_write);
 
 /* load_cmf_and_print_text
 -------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ Arguments:
 	• str_txt	- string with simple text
 
 Return value: 0 - success, 1 - fail*/
-int translate_text_and_print(char * str_txt);
+int translate_text_and_print(String  str_txt);
 
 /* print_cmf
 -------------------------------------------------------------------------------
@@ -149,7 +149,7 @@ Arguments:
 	• str_cmf	- string with code morse
 
 Return value: 0 - success, 1 - fail*/
-int print_cmf(char * str_cmf);
+int print_cmf(String  str_cmf);
 
 /* print_format_name
 -------------------------------------------------------------------------------
@@ -159,7 +159,7 @@ Arguments:
 	• file_name	- name of file
 
 Return value: none */
-void print_format_name(char * file_name);
+void print_format_name(String  file_name);
 
 /* quit
 -------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ Arguments:
 	• lat_symbol	-
 
 Return value: none */
-void add_symbol_to_tree(Morsetree * tree, char * morse_code, char lat_symbol);
+void add_symbol_to_tree(Morsetree * tree, String  morse_code, char lat_symbol);
 
 /* create_morsetree
 -------------------------------------------------------------------------------
@@ -208,7 +208,7 @@ Arguments:
 	• fp	- file stream
 
 Return value: 0 - success, 1 - fail*/
-int read_line(char * buff, int size, FILE * fp);
+int read_line(String  buff, int size, FILE * fp);
 
 /*
   string_cutter
@@ -223,7 +223,7 @@ int read_line(char * buff, int size, FILE * fp);
  @Return value:
 	returns pointer to string after cutting.
 */
-char * string_cutter(char * input, char * delimiter);
+String  string_cutter(String  input, String  delimiter);
 
 /*
   translate_cmf
@@ -239,7 +239,7 @@ char * string_cutter(char * input, char * delimiter);
  @Return value:
 	returns Pointer to buffer with text.
 */
-char * translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree);
+String  translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree);
 
 /*
   translate_cmf
@@ -257,7 +257,7 @@ char * translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
  @Return value:
 	returns Pointer to buffer with text.
 */
-char * translate_txt(String buffer, int size, FILE * cmf_file, String morseLettersArr, String morseDigitsArr);
+String  translate_txt(String buffer, int size, FILE * cmf_file, String morseLettersArr, String morseDigitsArr);
 
 /*
   read_cmc
@@ -272,15 +272,15 @@ char * translate_txt(String buffer, int size, FILE * cmf_file, String morseLette
  @Return value:
 	returns character text.
 */
-char read_cmc(Morsetree * tree, char * morse);
+char read_cmc(Morsetree * tree, String  morse);
 
 // TODO
-void writeMorseChar(String buffer, int * bufferIterr, char * morseChar);
+void writeMorseChar(String buffer, int * bufferIterr, String  morseChar);
 
 // TODO
-void addStrToStr(String buffer, char * deliver);
+void addStrToStr(String buffer, String  deliver);
 
 // TODO
-char *gets(char *str);
+String gets(String str);
 
 #endif // _MORSE_H

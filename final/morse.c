@@ -1,49 +1,49 @@
 #include "morse.h"
 
-const String commands[8] = { "load_cmf_and_print_text",
-								"load_cmf_and_save_text",
-								"load_text_and_print_cmf",
-								"load_text_and_save_cmf",
-								"translate_text_and_print",
-								"translate_cmf_and_print",
-								"print_format_name",
-								"quit:" };
-const String morseLettersArr[] = { "* ---",
-							"--- * * *",
-							"--- * --- *",
-							"--- * *",
-							"*",
-							"* * --- *",
-							"--- --- *",
-							"* * * *",
-							"* *",
-							"* --- --- ---",
-							"--- * ---",
-							"* --- * *",
-							"--- ---",
-							"--- *",
-							"--- --- ---",
-							"* --- --- *",
-							"--- --- * ---",
-							"* --- *",
-							"* * *",
-							"---",
-							"* * ---",
-							"* * * ---",
-							"* --- ---",
-							"--- * * ---",
-							"--- * --- ---",
-							"--- --- * *" };
-const String morseDigitsArr[] = { "* --- --- --- ---",
-							"* * --- --- ---",
-							"* * * --- ---",
-							"* * * * ---",
-							"* * * * *",
-							"--- * * * *",
-							"--- --- * * *",
-							"--- --- --- * *",
-							"--- --- --- --- *",
-							"--- --- --- --- ---" };
+const String commands[] = {			"load_cmf_and_print_text",
+									"load_cmf_and_save_text",
+									"load_text_and_print_cmf",
+									"load_text_and_save_cmf",
+									"translate_text_and_print",
+									"translate_cmf_and_print",
+									"print_format_name",
+									"quit:" };
+const String morseLettersArr[] = {	"* ---",					// A
+									"--- * * *",				// B
+									"--- * --- *",				// C
+									"--- * *",					// D
+									"*",						// E
+									"* * --- *",				// F
+									"--- --- *",				// G
+									"* * * *",					// H
+									"* *",						// I
+									"* --- --- ---",			// J
+									"--- * ---",				// K
+									"* --- * *",				// L
+									"--- ---",					// M
+									"--- *",					// N
+									"--- --- ---",				// O
+									"* --- --- *",				// P
+									"--- --- * ---",			// Q
+									"* --- *",					// R
+									"* * *",					// S
+									"---",						// T
+									"* * ---",					// U
+									"* * * ---",				// V
+									"* --- ---",				// W
+									"--- * * ---",				// X
+									"--- * --- ---",			// Y
+									"--- --- * *" };			// Z
+const String morseDigitsArr[] = {	"* --- --- --- ---",		// 1
+									"* * --- --- ---",			// 2
+									"* * * --- ---",			// 3
+									"* * * * ---",				// 4
+									"* * * * *",				// 5
+									"--- * * * *",				// 6
+									"--- --- * * *",			// 7
+									"--- --- --- * *",			// 8
+									"--- --- --- --- *",		// 9
+									"--- --- --- --- ---" };	// 0
 
 // done
 void print_menu(void)
@@ -72,66 +72,52 @@ void print_menu(void)
 }
 
 // done
-int check_command(char * tmp, int * argc, char ** argv)
+int check_command(String  sdtin_line, int * argc, char ** argv)
 {
-	int size = 0;
 	int i = 0, j = 0, choise = -1;
-	char *token;
+	String token;
 
-	token = strtok(tmp, " ");
+	// recieve first word - command
+	token = strtok(sdtin_line, " ");
 
-	/* check command */
-	argv[i] = (char *)malloc((strlen(token) + 1) * sizeof(char));
-	strcpy(argv[0], token);
-	token = strtok(NULL, " ");
-	++i;
+	/* save name of command */
+	argv[i] = (String )malloc((strlen(token) + 1) * sizeof(char));
+	strcpy(argv[i], token);
 
+	/* search command */
 	for (j = 0; j < NUM_OF_COMM && choise == -1; ++j)
 	{
-		if (!strcmp(argv[0], commands[j]))
+		if (!strcmp(argv[i], commands[j]))
 		{
 			choise = j;
 		}
 	}
 
-	if (choise == 4)
-	{
-		size = strlen(token);
-		argv[1] = (char *)malloc((size + 1) * sizeof(char));
-		argv[1] = strcpy(argv[1], "");
+	++i;
 
-		while (token != NULL)
-		{
-			size += strlen(token) + 1;
-			argv[1] = (char *)realloc(argv[1], size + 1);
-			argv[1] = strcat(argv[1], token);
-			argv[1] = strcat(argv[1], " ");
-			token = strtok(NULL, " ");
-		}
+	if (choise == 4 || choise == 5)
+	{
+		// recieve the whole string
+		token = strtok(NULL, "\0");
+
+		argv[i] = (String)malloc((strlen(token) + 1) * sizeof(char));
+		strcpy(argv[i], token);
 	}
 	else
 	{
-		if (choise == 5)
-		{
-			argv[1] = (char *)malloc(MAX_CMS_LENGTH * sizeof(char));
-			argv[1] = strcpy(argv[1], token);
-			argv[1] = strcat(argv[1], " ");
-			token = strtok(NULL, "\0");
-			argv[1] = strcat(argv[1], token);
-		}
-		else
-		{
-			while (token != NULL && i <= MAX_ARGS_SIZE)
-			{
-				argv[i] = (char *)malloc((strlen(token) + 1) * sizeof(char));
-				strcpy(argv[i], token);
-				token = strtok(NULL, " ");
-				++i;
-			}
+		// recieve next word
+		token = strtok(NULL, " ");
 
-			*argc = i;
+		while (token != NULL && i <= MAX_ARGS_SIZE)
+		{
+			argv[i] = (String)malloc((strlen(token) + 1) * sizeof(char));
+			strcpy(argv[i], token);
+			token = strtok(NULL, " ");
+			++i;
 		}
 	}
+	
+	*argc = i;
 
 	return (choise);
 }
@@ -150,7 +136,7 @@ void free_memory(int argc, char ** argv)
 }
 
 // done
-FILE * open_file_for_read(char * filename)
+FILE * open_file_for_read(String filename)
 {
 	FILE * result = NULL;
 
@@ -160,7 +146,7 @@ FILE * open_file_for_read(char * filename)
 }
 
 // done
-FILE *  open_file_for_write(char * filename)
+FILE *  open_file_for_write(String filename)
 {
 	FILE * result = NULL;
 
@@ -263,16 +249,22 @@ int load_text_and_save_cmf(int argc, char ** argv)
 	return (result);
 }
 
-// TODO
-int translate_text_and_print(char * str_txt)
+// TODO, Depricated
+int translate_text_and_print(String str_txt)
 {
 	int result = SUCCESS;
+
+	if (*str_txt)
+	{
+		printf("%s", str_txt);
+		result = SUCCESS;
+	}
 
 	return (result);
 }
 
 // TODO, Depricated
-int print_cmf(char * str_cmf)
+int print_cmf(String str_cmf)
 {
 	int result = FAILURE;
 
@@ -286,7 +278,7 @@ int print_cmf(char * str_cmf)
 }
 
 // done
-void print_format_name(char * file_name)
+void print_format_name(String file_name)
 {
 	if (file_name != NULL)
 	{
@@ -322,7 +314,7 @@ void quit(int argc, char ** argv)
 }
 
 // done
-void add_symbol_to_tree(Morsetree * tree, char * morse_code, char lat_symbol)
+void add_symbol_to_tree(Morsetree * tree, String morse_code, char lat_symbol)
 {
 	Morsetree * tmp_tree;
 	int i, len;
@@ -373,10 +365,10 @@ Morsetree * create_morsetree(char lat_symbol)
 }
 
 // done
-int read_line(char *buff, int size, FILE *fp)
+int read_line(String buff, int size, FILE *fp)
 {
 	int result = SUCCESS;
-	char *tmp;
+	String tmp;
 
 	buff[0] = '\0';
 	buff[size - 1] = '\0';             //mark end of buffer
@@ -399,25 +391,25 @@ int read_line(char *buff, int size, FILE *fp)
 }
 
 // PROBLEM
-char * string_cutter(char *input, char *delimiter) 
+String string_cutter(String input, String delimiter) 
 {
-	static char *string;
+	static String string;
 	if (input != NULL)
 		string = input;
 
 	if (string == NULL)
 		return string;
 
-	char *end = strstr(string, delimiter);
+	String end = strstr(string, delimiter);
 	if (end == NULL) 
 	{
-		char *temp = string;
+		String temp = string;
 		string = NULL;
 		return temp;
 	}
 
 	// TODO ..........this is problem.........
-	char *temp = string;
+	String temp = string;
 
 	*end = '\0';
 	string = end + strlen(delimiter);
@@ -425,10 +417,10 @@ char * string_cutter(char *input, char *delimiter)
 }
 
 // done
-char * translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
+String  translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
 {
 	String line = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
-	char *word, *q1, *letter, *q2;
+	String word, q1, letter, q2;
 	int i = 0;
 
 	while (read_line(line, size, cmf_file))
@@ -459,7 +451,7 @@ char * translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
 
 //Created by tamir
 //Not tested
-char * translate_txt(String buffer, int size, FILE * cmf_file, String morseLettersArr, String morseDigitsArr)
+String  translate_txt(String buffer, int size, FILE * cmf_file, String morseLettersArr, String morseDigitsArr)
 {
 	String line = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
 	char  * lineIterr;
@@ -483,7 +475,7 @@ char * translate_txt(String buffer, int size, FILE * cmf_file, String morseLette
 }
 
 // TODO
-void addStrToStr(String buffer, char * deliver)
+void addStrToStr(String buffer, String  deliver)
 {
 	/*
 		TODO
@@ -491,7 +483,7 @@ void addStrToStr(String buffer, char * deliver)
 }
 
 // TODO
-void writeMorseChar(String buffer, int * bufferIterr, char * morseChar)
+void writeMorseChar(String buffer, int * bufferIterr, String  morseChar)
 {
 	if (IS_DIGIT(*bufferIterr))
 	{
@@ -511,7 +503,7 @@ void writeMorseChar(String buffer, int * bufferIterr, char * morseChar)
 }
 
 // done
-char read_cmc(Morsetree *tree, char *morse)
+char read_cmc(Morsetree *tree, String morse)
 {
 	Morsetree * curr = tree;
 	char symbol;
