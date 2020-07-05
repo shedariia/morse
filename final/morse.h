@@ -190,7 +190,6 @@ void add_symbol_to_tree(Morsetree * tree, String  morse_code, char lat_symbol);
 Description: add first symbol to tree structure
 
 Arguments:
-
 	• lat_symbol	-
 
 Return value: none */
@@ -242,7 +241,7 @@ String  string_cutter(String  input, String  delimiter);
 String  translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree);
 
 /*
-  translate_cmf
+  translate_txt
  ----------------------------
  @Description:
 	A function translate from text file to morse code.
@@ -274,13 +273,35 @@ String  translate_txt(String buffer, int size, FILE * cmf_file, String morseLett
 */
 char read_cmc(Morsetree * tree, String  morse);
 
-// TODO
+/*
+  writeMorseChar
+ ----------------------------
+ @Description:
+	This funnction 
+
+ @Arguments:
+
+
+ @Return value:
+	none
+*/
 void writeMorseChar(String buffer, int * bufferIterr, String  morseChar);
 
-// TODO
+/*
+  addStrToStr
+ ----------------------------
+ @Description:
+	This funnction
+
+ @Arguments:
+
+
+ @Return value:
+	none
+*/
 void addStrToStr(String buffer, String  deliver);
 
-// TODO
+// initialization of old standart function
 String gets(String str);
 
 #endif // _MORSE_H
