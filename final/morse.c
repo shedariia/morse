@@ -483,7 +483,7 @@ int read_line(String buff, int size, FILE *fp)
 String  translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
 {
 	String line = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
-	String word, q1, letter;
+	String word, q1;
 	char *q2 = (String)calloc(20, sizeof(char));
 	int i = 0;
 
