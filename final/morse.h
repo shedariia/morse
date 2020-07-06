@@ -224,6 +224,9 @@ int read_line(String  buff, int size, FILE * fp);
 */
 String  string_cutter(String  input, String  delimiter);
 
+/**/
+void strtok2(char * word, Morsetree * tree);
+
 /*
   translate_cmf
  ----------------------------

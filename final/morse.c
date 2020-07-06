@@ -390,8 +390,33 @@ int read_line(String buff, int size, FILE *fp)
 	return result;
 }
 
+// done
+String  translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
+{
+	String line = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
+	String word, q1, letter;
+	char *q2 = (String)calloc(20, sizeof(char));
+	int i = 0;
+
+	while (read_line(line, size, cmf_file))
+	{
+		// split line into words
+		for (q1 = line; (word = string_cutter(q1, WORD_DEVIDER)) != NULL; q1 = NULL)
+		{
+			strtok2(word, tree);		
+		}
+		buffer[i++] = '\n'; // ascii line feed after each line
+
+	}
+
+	buffer[i] = '\0';
+	free(line);
+
+	return (buffer);
+}
+
 // PROBLEM
-String string_cutter(String input, String delimiter) 
+String string_cutter(String input, String delimiter)
 {
 	static String string;
 	if (input != NULL)
@@ -401,7 +426,7 @@ String string_cutter(String input, String delimiter)
 		return string;
 
 	String end = strstr(string, delimiter);
-	if (end == NULL) 
+	if (end == NULL)
 	{
 		String temp = string;
 		string = NULL;
@@ -416,37 +441,42 @@ String string_cutter(String input, String delimiter)
 	return temp;
 }
 
-// done
-String  translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
+void strtok2(char * word, Morsetree * tree)
 {
-	String line = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
-	String word, q1, letter, q2;
+	char letter[22] = "\0";
+	char *p = NULL;
 	int i = 0;
 
-	while (read_line(line, size, cmf_file))
+	p = word;
+
+	while (*p)
 	{
-		// split line into words
-		for (q1 = line; (word = string_cutter(q1, WORD_DEVIDER)) != NULL; q1 = NULL)
+		while (*p == ' ')
+			p++;
+
+		if (*p == '*' || *p == '-')
 		{
-
-			// split the word into letters
-			for (q2 = word; (letter = string_cutter(q2, LETTER_DEVIDER)) != NULL; q2 = NULL)
-			{
-				// decode the Morse code letter and display it
-
-				buffer[i++] = read_cmc(tree, letter);
-			}
-			buffer[i++] = ' ';
-			
+			letter[i++] = *p;
+			letter[i] = '\0';
+			p++;
 		}
-		buffer[i++] = '\n'; // ascii line feed after each line
 
+		if (*p == ' ')
+		{
+			letter[i++] = *p;
+			letter[i] = '\0';
+			p++;
+
+			if (*p == ' ')
+			{
+				letter[i - 1] = '\0';
+				printf("%c", read_cmc(tree, letter));
+				i = 0;
+			}
+		}
 	}
-
-	buffer[i] = '\0';
-	free(line);
-
-	return (buffer);
+	printf("%c", read_cmc(tree, letter));
+	printf("%c", ' ');
 }
 
 //Created by tamir

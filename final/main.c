@@ -38,14 +38,14 @@ void main(void)
 	add_symbol_to_tree(tree, "-**-", 'X');
 	add_symbol_to_tree(tree, "-*--", 'Y');
 	add_symbol_to_tree(tree, "--**", 'Z');
-	add_symbol_to_tree(tree, "----", '0');
+	add_symbol_to_tree(tree, "-----", '0');
 	add_symbol_to_tree(tree, "*----", '1');
 	add_symbol_to_tree(tree, "**---", '2');
 	add_symbol_to_tree(tree, "***--", '3');
 	add_symbol_to_tree(tree, "****-", '4');
 	add_symbol_to_tree(tree, "*****", '5');
 	add_symbol_to_tree(tree, "-****", '6');
-	add_symbol_to_tree(tree, "-***", '7');
+	add_symbol_to_tree(tree, "--***", '7');
 	add_symbol_to_tree(tree, "---**", '8');
 	add_symbol_to_tree(tree, "----*", '9');
 
