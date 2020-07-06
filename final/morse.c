@@ -34,7 +34,8 @@ const String morseLettersArr[] = {	"* ---",					// A
 									"--- * * ---",				// X
 									"--- * --- ---",			// Y
 									"--- --- * *" };			// Z
-const String morseDigitsArr[] = {	"* --- --- --- ---",		// 1
+const String morseDigitsArr[] = { "--- --- --- --- ---",		// 0
+									"* --- --- --- ---",		// 1
 									"* * --- --- ---",			// 2
 									"* * * --- ---",			// 3
 									"* * * * ---",				// 4
@@ -42,8 +43,7 @@ const String morseDigitsArr[] = {	"* --- --- --- ---",		// 1
 									"--- * * * *",				// 6
 									"--- --- * * *",			// 7
 									"--- --- --- * *",			// 8
-									"--- --- --- --- *",		// 9
-									"--- --- --- --- ---" };	// 0
+									"--- --- --- --- *" };		// 9
 
 // done
 void print_menu(void)
@@ -167,7 +167,6 @@ int load_cmf_and_print_text(int argc, char ** argv, Morsetree * tree)
 		if (cmf_file = open_file_for_read(argv[1]))
 		{
 			translate_cmf(buffer, MAX_CMS_LENGTH, cmf_file, tree);
-			printf("%s", buffer);
 			fclose(cmf_file);
 		}
 
@@ -183,7 +182,7 @@ int load_cmf_and_print_text(int argc, char ** argv, Morsetree * tree)
 	return (result);
 }
 
-// done
+// TODOOOOOOOOO!!!!!!
 int load_cmf_and_save_text(int argc, char ** argv, Morsetree * tree)
 {
 	FILE * cmf_file = NULL, *txt_file = NULL;
@@ -212,24 +211,60 @@ int load_cmf_and_save_text(int argc, char ** argv, Morsetree * tree)
 	return (result);
 }
 
-// TODO, WIP by tamir
+// done
 int load_text_and_print_cmf(int argc, char ** argv)
 {
-	FILE * cmf_file = NULL;
+	FILE * txt_file = NULL;
 	int result = FAILURE;
 	String buffer = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
 
 	if (argc == 2)
 	{
-		cmf_file = open_file_for_read(argv[1]);
+		txt_file = open_file_for_read(argv[1]);
 
-		if (cmf_file)
+		if (txt_file)
 		{
-			/* 
-				TODO 
-			*/
+			while (!feof(txt_file))
+			{
+				fgets(buffer, MAX_LENGTH, txt_file);
+				printf("%s", from_txt_to_cmf_line(buffer));
+			}
 
 			result = SUCCESS;
+			fclose(txt_file);
+		}
+	}
+	else
+	{
+		printf("You must enter one argument\n");
+	}
+
+	return (result);
+}
+
+// done
+int load_text_and_save_cmf(int argc, char ** argv)
+{
+	FILE * cmf_file = NULL, * txt_file = NULL;
+	int result = FAILURE;
+	String buffer = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
+
+	if (argc == 3)
+	{
+		txt_file = open_file_for_read(argv[1]);
+		cmf_file = open_file_for_write(argv[2]);
+
+		if (txt_file && cmf_file)
+		{
+			while (!feof(txt_file))
+			{
+				fgets(buffer, MAX_LENGTH, txt_file);
+				fprintf(cmf_file, "%s", from_txt_to_cmf_line(buffer));
+			}
+
+			result = SUCCESS;
+
+			fclose(txt_file);
 			fclose(cmf_file);
 		}
 	}
@@ -241,24 +276,78 @@ int load_text_and_print_cmf(int argc, char ** argv)
 	return (result);
 }
 
-// TODO, WIP by tamir
-int load_text_and_save_cmf(int argc, char ** argv)
+// done
+String from_txt_to_cmf_line(String str_txt)
 {
+	String morse_res = (String)malloc(sizeof(char)), temp;
 	int result = SUCCESS;
 
-	return (result);
+	strcpy(morse_res, "");
+
+	if (*str_txt)
+	{
+		while (*str_txt && result)
+		{
+			if (isdigit(*str_txt))
+			{
+				temp = (String)realloc(morse_res, (strlen(morse_res) + 1) + strlen(morseDigitsArr[(*str_txt) - 48]) + 3);
+
+				if (temp)
+				{
+					morse_res = temp;
+					strcat(morse_res, morseDigitsArr[(*str_txt) - 48]);
+					strcat(morse_res, "   ");
+				}
+				//printf("%s   ", morseDigitsArr[(*str_txt) - 48]);
+			}
+			else
+			{
+				if (isupper(*str_txt))
+				{
+					temp = (String)realloc(morse_res, (strlen(morse_res) + 1) + strlen(morseLettersArr[(*str_txt) - 65]) + 3);
+
+					if (temp)
+					{
+						morse_res = temp;
+						strcat(morse_res, morseLettersArr[(*str_txt) - 65]);
+						strcat(morse_res, "   ");
+					}
+					//printf("%s   ", morseLettersArr[(*str_txt) - 65]);
+				}
+				else
+				{
+					if (isspace(*str_txt))
+					{
+						temp = (String)realloc(morse_res, (strlen(morse_res) + 1) + 4);
+
+						if (temp)
+						{
+							morse_res = temp;
+							strcat(morse_res, "    ");
+						}
+						//printf("    ");
+					}
+					else
+					{
+						printf("\nError writting morse code... Please, check\n");
+						result = FAILURE;
+					}
+				}
+			}
+
+			++str_txt;
+		}
+	}
+
+	return (morse_res);
 }
 
-// TODO, Depricated
+// done
 int translate_text_and_print(String str_txt)
 {
 	int result = SUCCESS;
 
-	if (*str_txt)
-	{
-		printf("%s", str_txt);
-		result = SUCCESS;
-	}
+	printf("%s", from_txt_to_cmf_line(str_txt));
 
 	return (result);
 }
@@ -415,7 +504,7 @@ String  translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree
 	return (buffer);
 }
 
-// PROBLEM
+// done
 String string_cutter(String input, String delimiter)
 {
 	static String string;
@@ -433,7 +522,6 @@ String string_cutter(String input, String delimiter)
 		return temp;
 	}
 
-	// TODO ..........this is problem.........
 	String temp = string;
 
 	*end = '\0';

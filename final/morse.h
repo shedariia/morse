@@ -4,6 +4,7 @@
 #include <stdio.h>				/* fopen(), printf(), ... */
 #include <string.h>				/* strcmp(), strlen(), ... */
 #include <stdlib.h>				/* malloc(), free(), ...*/
+#include <ctype.h>				/* isdigit() */
 
 #define SUCCESS 1				/* exit without errors */
 #define FAILURE 0				/* exit with error */
@@ -307,4 +308,6 @@ void addStrToStr(String buffer, String  deliver);
 // initialization of old standart function
 String gets(String str);
 
+
+String from_txt_to_cmf_line(String str_txt);
 #endif // _MORSE_H
