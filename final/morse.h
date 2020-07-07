@@ -4,7 +4,7 @@
 #include <stdio.h>				/* fopen(), printf(), ... */
 #include <string.h>				/* strcmp(), strlen(), ... */
 #include <stdlib.h>				/* malloc(), free(), ...*/
-#include <ctype.h>				/* isdigit() */
+#include <ctype.h>				/* isdigit(), isspace(), ... */
 
 #define SUCCESS 1				/* exit without errors */
 #define FAILURE 0				/* exit with error */
@@ -12,17 +12,13 @@
 #define MAX_CMS_LENGTH 1000		/* max length of morse code string in file */
 #define MAX_ARGS_SIZE 2			/* max number of arguments */
 #define NUM_OF_COMM 8			/* number of commands */
-#define WORD_DEVIDER "       " /* seven spaces between words */
+#define WORD_DEVIDER "       "	/* seven spaces between words */
 #define LETTER_DEVIDER "   "	/* three spaces between words */
 #define MORSE_DIGIT_OFFSET 48	/* help arrive first cell in digit array */
 #define MORSE_LETTER_OFFSET 65	/* help arrive first cell in letters array */
 
 #define _GREEN "\033[1;32m"		/* green color in stdout */
 #define _END "\033[0m"			/* default color in stdout */
-
-#define IS_DIGIT(X) ( '0' <= (X) && (X) <= '9' ) ? 1 : 0 
-#define IS_LETTER(X) ( 'A' <= (X) && (X) <= 'Z' ) ? 1 : 0
-#define IS_SPACE(X) ( ( X ) == ' ' || ( X ) == '\t' ) ? 1 : 0
 
 #pragma warning (disable: 4996)	/* hide warning for fopen(), fcolse(), ... */
 
@@ -106,11 +102,12 @@ Description: translate file from code morse and save results to another file
 Arguments:
 	• argc	- number of substring
 	• argv	- array with value of substrings
+	• tree	- morse tree
 
 Return value: 0 - success, 1 - fail*/
 int load_cmf_and_save_text(int argc, char ** argv, Morsetree * tree);
 
-/* load_text_and_print_cmf
+/* load_text_and_translate_cmf_and_print
 -------------------------------------------------------------------------------
 Description: translate file to code morse and print results to stdout
 
@@ -119,7 +116,7 @@ Arguments:
 	• argv	- array with value of substrings
 
 Return value: 0 - success, 1 - fail*/
-int load_text_and_print_cmf(int argc, char ** argv);
+int load_text_and_translate_cmf_and_print(int argc, char ** argv);
 
 /* load_text_and_save_cmf
 -------------------------------------------------------------------------------
@@ -142,7 +139,7 @@ Arguments:
 Return value: 0 - success, 1 - fail*/
 int translate_text_and_print(String  str_txt);
 
-/* print_cmf
+/* translate_cmf_and_print
 -------------------------------------------------------------------------------
 Description: translate string from stdin from code morse
 
@@ -150,7 +147,7 @@ Arguments:
 	• str_cmf	- string with code morse
 
 Return value: 0 - success, 1 - fail*/
-int print_cmf(String  str_cmf);
+int translate_cmf_and_print(String  str_cmf);
 
 /* print_format_name
 -------------------------------------------------------------------------------
@@ -173,33 +170,42 @@ Arguments:
 Return value: none */
 void quit(int argc, char ** argv);
 
+/* create_morsetree
+-------------------------------------------------------------------------------
+Description: add first symbol to tree structure
+
+Arguments:
+	• lat_symbol	- symbol
+
+Return value: none */
+Morsetree * create_morsetree(char lat_symbol);
+
 /* add_symbol_to_tree
 -------------------------------------------------------------------------------
 Description: add one symbol to morse tree structure
 
 Arguments:
 
-	• tree			- 
-	• morse_code	-
-	• lat_symbol	-
+	• tree			- morse tree
+	• morse_code	- morse code of symbol
+	• lat_symbol	- symbol
 
 Return value: none */
 void add_symbol_to_tree(Morsetree * tree, String  morse_code, char lat_symbol);
 
-/* create_morsetree
+/* fill_tree
 -------------------------------------------------------------------------------
-Description: add first symbol to tree structure
+ Description: fill morse tree
 
-Arguments:
-	• lat_symbol	-
+ Arguments:
+	• tree	- a point Morse tree
 
-Return value: none */
-Morsetree * create_morsetree(char lat_symbol);
+ Return value: filled morse tree */
+Morsetree * fill_tree(Morsetree * tree);
 
 /* read_line
 -------------------------------------------------------------------------------
 Description: read one line form input file
-
 
 Arguments:
 
@@ -207,107 +213,66 @@ Arguments:
 	• size	- size of buffer
 	• fp	- file stream
 
-Return value: 0 - success, 1 - fail*/
+Return value: 0 - success, 1 - fail */
 int read_line(String  buff, int size, FILE * fp);
 
-/*
-  string_cutter
- ----------------------------
- @Description:
-	A function cut strings before delimeter.
+/* string_cutter
+-------------------------------------------------------------------------------
+ Description: cut strings before delimeter
 
- @Arguments:
-	-input		 - a pointer to the input.
-	-delimiter   - a pointer to the delimetr string.
+ Arguments:
+	• input		- a pointer to the input
+	• delimiter	- a pointer to the delimetr string
 
- @Return value:
-	returns pointer to string after cutting.
-*/
-String  string_cutter(String  input, String  delimiter);
+ Return value: returns pointer to string after cutting */
+String string_cutter(String  input, String  delimiter);
 
-/**/
-void strtok2(char * word, Morsetree * tree);
+/* word_from_cmf_to_txt
+-------------------------------------------------------------------------------
+ Description: translate word of morse code to text
 
-/*
-  translate_cmf
- ----------------------------
- @Description:
-	A function taranslate morse code from file to text.
- @Arguments:
-	-buffer		- a pointer to buffer with text.
-	-size		- a max size of buffer.
-	-cmf-file	- a pointer to file with morse code.
-	-tree		-a pointer Morse tree.
+ Arguments:
+	• word	- word of morse code
+	• tree	- morse tree
 
- @Return value:
-	returns Pointer to buffer with text.
-*/
-String  translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree);
+ Return value: none */
+void word_from_cmf_to_txt(char * word, Morsetree * tree);
 
-/*
-  translate_txt
- ----------------------------
- @Description:
-	A function translate from text file to morse code.
+/* translate_cmf
+-------------------------------------------------------------------------------
+ Description: taranslate morse code from file to text
 
- @Arguments:
-	-buffer			- a pointer to buffer with text.
-	-size			- a max size of buffer.
-	-cmf-file		- a pointer to file with morse code.
-	-morseLettersArr	-a pointer to array with letters.
-	-morseDigitsArr		-a pointer to array with digits.
+ Arguments:
+	• buffer	- a pointer to buffer with text
+	• size		- a max size of buffer
+	• cmf-file	- a pointer to file with morse code
+	• tree		- a pointer Morse tree
 
- @Return value:
-	returns Pointer to buffer with text.
-*/
-String  translate_txt(String buffer, int size, FILE * cmf_file, String morseLettersArr, String morseDigitsArr);
+ Return value: returns Pointer to buffer with text */
+String translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree);
 
-/*
-  read_cmc
- ----------------------------
- @Description:
-	This funnction translate morse character to text.
+/* read_cmc
+-------------------------------------------------------------------------------
+ Description: translate morse character to text
 
- @Arguments:
-	-morse	-a pointer to String morse character representation.
-	-tree	-a point Morse tree.
+ Arguments:
+	• morse	- a pointer to String morse character representation
+	• tree	- a point Morse tree
 
- @Return value:
-	returns character text.
-*/
+ Return value: returns character text */
 char read_cmc(Morsetree * tree, String  morse);
 
-/*
-  writeMorseChar
- ----------------------------
- @Description:
-	This funnction 
+/* fill_tree
+-------------------------------------------------------------------------------
+ Description: translate text to morse code
 
- @Arguments:
+ Arguments:
+	• str_txt	- string with text
 
+ Return value: line after translation */
+String from_txt_to_cmf_line(String str_txt);
 
- @Return value:
-	none
-*/
-void writeMorseChar(String buffer, int * bufferIterr, String  morseChar);
-
-/*
-  addStrToStr
- ----------------------------
- @Description:
-	This funnction
-
- @Arguments:
-
-
- @Return value:
-	none
-*/
-void addStrToStr(String buffer, String  deliver);
-
-// initialization of old standart function
+/* initialization of old standart function */
 String gets(String str);
 
-
-String from_txt_to_cmf_line(String str_txt);
 #endif // _MORSE_H
