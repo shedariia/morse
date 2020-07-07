@@ -141,7 +141,7 @@ FILE * open_file_for_read(String filename)
 	return (result);
 }
 
-FILE *  open_file_for_write(String filename)
+FILE * open_file_for_write(String filename)
 {
 	FILE * result = NULL;
 
@@ -589,8 +589,6 @@ void word_from_cmf_to_txt(char * word, Morsetree * tree)
 			}
 		}
 	}
-	printf("%c", read_cmc(tree, letter));
-	printf("%c", ' ');
 }
 
 char read_cmc(Morsetree *tree, String morse)
