@@ -55,7 +55,7 @@ void print_menu(void)
 	printf("\t-     Translate morse file to text and print results               -\n");
 	printf("\t-   * "_GREEN"load_cmf_and_save_text"_END" file_name.cmf file_name.txt           -\n");
 	printf("\t-     Translate morse file to text and save results to new file    -\n");
-	printf("\t-   * "_GREEN"load_text_and_print"_END" file_name.txt                        -\n");
+	printf("\t-   * "_GREEN"load_text_and_print_cmf"_END" file_name.txt                        -\n");
 	printf("\t-     Translate text file to morse and print results               -\n");
 	printf("\t-   * "_GREEN"load_text_and_save_cmf"_END" file_name.txt file_name.cmf           -\n");
 	printf("\t-     Translate txt file to morse and save results to new file     -\n");
