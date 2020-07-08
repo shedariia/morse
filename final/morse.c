@@ -154,48 +154,69 @@ int load_cmf_and_print_text(int argc, char ** argv, Morsetree * tree)
 {
 	FILE * cmf_file = NULL;
 	int result = FAILURE;
-	String buffer = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
+	String translate;
+	String cmf_line;
 	
-	if (argc == 2)
+	if (argc == 2 && (cmf_file = open_file_for_read(argv[1])))
 	{
-		if (cmf_file = open_file_for_read(argv[1]))
+		translate = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
+		cmf_line = (String)calloc(MAX_CMS_LINE, sizeof(char));
+
+		if (translate && cmf_line)
 		{
-			translate_cmf_and_print( translate_cmf(buffer, MAX_CMS_LENGTH, cmf_file, tree) );
-			fclose(cmf_file);
+
+			/* Scaninig file and printing */
+			while (read_line(cmf_line, MAX_CMS_LINE, cmf_file))
+			{
+				translate_cmf_and_print(cmf_line, tree);
+			}
+
+			result = SUCCESS;
 		}
 
-		result = SUCCESS;
+		if (cmf_file) fclose(cmf_file);
+		if (cmf_line) free(cmf_line);
+		if (translate) free(translate);
 	}
 	else
 	{
 		printf("You must enter one argument\n");
 	}
-	
-	free(buffer);
 
 	return (result);
 }
 
-// TODOOOOOOOOO!!!!!!
 int load_cmf_and_save_text(int argc, char ** argv, Morsetree * tree)
 {
 	FILE * cmf_file = NULL, *txt_file = NULL;
 	int result = FAILURE;
-	String buffer = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
+	String cmf_line;
+	String translate;
 
 	if (argc == 3)
 	{
 		cmf_file = open_file_for_read(argv[1]);
 		txt_file = open_file_for_write(argv[2]);
+		cmf_line = (String)calloc(MAX_CMS_LINE, sizeof(char));
+		translate = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
 
-		if (cmf_file)
+		if (cmf_file && txt_file)
 		{
-			buffer = translate_cmf(buffer, MAX_CMS_LENGTH, cmf_file, tree);
-			fprintf(txt_file, "%s", buffer);
-			result = SUCCESS;
-			fclose(cmf_file);
-			fclose(txt_file);
+			if (cmf_line && translate) 
+			{
+				/* Scaning file and writing to another file */
+				while (read_line(cmf_line, MAX_CMS_LINE, cmf_file)) {
+					fprintf(txt_file, "%s", translate_cmf(translate, cmf_line, tree));
+					clean_string(translate);
+				}
+				result = SUCCESS;
+			}
 		}
+
+		if (cmf_file) fclose(cmf_file);
+		if (txt_file) fclose(txt_file);
+		if (cmf_line) free(cmf_line);
+		if (translate) free(translate);
 	}
 	else
 	{
@@ -209,23 +230,25 @@ int load_text_and_translate_cmf_and_print(int argc, char ** argv)
 {
 	FILE * txt_file = NULL;
 	int result = FAILURE;
-	String buffer = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
+	String buffer;
 
 	if (argc == 2)
 	{
 		txt_file = open_file_for_read(argv[1]);
+		buffer = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
 
-		if (txt_file)
+		if (txt_file && buffer)
 		{
 			while (!feof(txt_file))
 			{
 				fgets(buffer, MAX_LENGTH, txt_file);
 				printf("%s", from_txt_to_cmf_line(buffer));
 			}
-
 			result = SUCCESS;
-			fclose(txt_file);
 		}
+
+		if (txt_file) fclose(txt_file);
+		if (buffer) free(buffer);
 	}
 	else
 	{
@@ -239,26 +262,31 @@ int load_text_and_save_cmf(int argc, char ** argv)
 {
 	FILE * cmf_file = NULL, * txt_file = NULL;
 	int result = FAILURE;
-	String buffer = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
+	String traslation;
 
 	if (argc == 3)
 	{
 		txt_file = open_file_for_read(argv[1]);
 		cmf_file = open_file_for_write(argv[2]);
+		traslation = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
 
-		if (txt_file && cmf_file)
+		if (txt_file && cmf_file && traslation)
 		{
+			
 			while (!feof(txt_file))
 			{
-				fgets(buffer, MAX_LENGTH, txt_file);
-				fprintf(cmf_file, "%s", from_txt_to_cmf_line(buffer));
+				fgets(traslation, MAX_LENGTH, txt_file);
+				fprintf(cmf_file, "%s", from_txt_to_cmf_line(traslation));
+				clean_string(traslation);
 			}
 
 			result = SUCCESS;
-
-			fclose(txt_file);
-			fclose(cmf_file);
 		}
+
+		if (txt_file) fclose(txt_file);
+		if (cmf_file) fclose(cmf_file);
+		if (traslation) free(traslation);
+
 	}
 	else
 	{
@@ -342,17 +370,22 @@ int translate_text_and_print(String str_txt)
 	return (result);
 }
 
-// TODOOOOOOOOO!!!!!!
-int translate_cmf_and_print(String str_cmf)
+int translate_cmf_and_print(String str_cmf, Morsetree * tree)
 {
 	int result = FAILURE;
+	String translate;
 
 	if (*str_cmf)
 	{
-		printf("%s", str_cmf);
-		result = SUCCESS;
-	}
+		translate = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
 
+		if (translate)
+		{
+			printf("%s", translate_cmf(translate, str_cmf, tree));
+			result = SUCCESS;
+			free(translate);
+		}
+	}
 	return (result);
 }
 
@@ -488,7 +521,7 @@ int read_line(String buff, int size, FILE *fp)
 	String tmp;
 
 	buff[0] = '\0';
-	buff[size - 1] = '\0';             //mark end of buffer
+	buff[size - 1] = '\0';             //mark end of traslation
 	
 
 	if (fgets(buff, size, fp) == NULL) 
@@ -507,35 +540,27 @@ int read_line(String buff, int size, FILE *fp)
 	return result;
 }
 
-String  translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree)
+String  translate_cmf(String translate, String cmf_line, Morsetree * tree)
 {
-	String line = (String)calloc(MAX_CMS_LENGTH * 10, sizeof(char));
+	String cms_word, q1;
 	String txt_word = (String)calloc(MAX_LENGTH, sizeof(char));
 
-	String cms_word, q1;
-	char *q2 = (String)calloc(20, sizeof(char));
-	int i = 0;
-
-	while (read_line(line, size, cmf_file))
-	{
+	if (txt_word) {
 		// split line into words
-		for (q1 = line; (cms_word = string_cutter(q1, WORD_DEVIDER)) != NULL; q1 = NULL)
+		for (q1 = cmf_line; (cms_word = cut_string(q1, WORD_DEVIDER)) != NULL; q1 = NULL)
 		{
 			word_from_cmf_to_txt(txt_word, cms_word, tree);
-			strcat(buffer, txt_word);
-			strcat(buffer, " ");
+			strcat(translate, txt_word);
+			strcat(translate, " ");
 		}
-		strcat(buffer, "\n");
-
+		strcat(translate, "\n");
+		free(txt_word);
 	}
 
-	free(line);
-	free(txt_word);
-
-	return (buffer);
+	return (translate);
 }
 
-String string_cutter(String input, String delimiter)
+String cut_string(String input, String delimiter)
 {
 	static String string;
 	if (input != NULL)
@@ -559,35 +584,42 @@ String string_cutter(String input, String delimiter)
 	return temp;
 }
 
-void word_from_cmf_to_txt(String buffer, char * word, Morsetree * tree)
+void clean_string(String str) {
+	String p = str;
+
+	while (*p) {
+		*p = '\0';
+		p++;
+	}
+}
+
+void word_from_cmf_to_txt(String translate, String mcf_word, Morsetree * tree)
 {
 	char letter[22] = "\0";
 	
 	int i = 0;
-	char *p = word;
-	char *buf_p = buffer;
+	char *mcf_word_p = mcf_word;
+	char *translate_p = translate;
 
-	while (*p == ' ')
-		p++;
+	while (*mcf_word_p == ' ')
+		mcf_word_p++;
 
-	while (*p)
+	while (*mcf_word_p)
 	{
-		if (*p != ' ') 
+		if (*mcf_word_p != ' ') 
 		{
-			letter[i++] = *p;
+			letter[i++] = *mcf_word_p;
 			letter[i] = '\0';
 		}
-		p++;
+		mcf_word_p++;
 
-		if (*p == ' ' && i > 0 && *(p - 1) == ' ' || *p == '\0') {
+		if (*mcf_word_p == ' ' && i > 0 && *(mcf_word_p - 1) == ' ' || *mcf_word_p == '\0') {
 			i = 0;
-			*buf_p = read_cmc(tree, letter);
-			*buf_p++;
-			*buf_p = '\0';
+			*translate_p = read_cmc(tree, letter);
+			*translate_p++;
+			*translate_p = '\0';
 		}
-
 	}
-
 }
 
 char read_cmc(Morsetree *tree, String morse)

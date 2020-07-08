@@ -37,7 +37,7 @@ void main(void)
 			translate_text_and_print(argv[1]);
 			break;
 		case 5:
-			translate_cmf_and_print(argv[1]);
+			translate_cmf_and_print(argv[1], tree);
 			break;
 		case 6:
 			print_format_name(argv[1]);

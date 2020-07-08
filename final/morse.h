@@ -9,7 +9,9 @@
 #define SUCCESS 1				/* exit without errors */
 #define FAILURE 0				/* exit with error */
 #define MAX_LENGTH 255			/* max length of string */
-#define MAX_CMS_LENGTH 1000		/* max length of morse code string in file */
+#define MAX_CMS_LENGTH 10000	/* max length of morse code string in file */
+#define MAX_CMS_LINE 500		/* max length of morse line in morse code */
+#define TRANSLATE_BUFFER 5000	/* max length of text that program can translate */
 #define MAX_ARGS_SIZE 2			/* max number of arguments */
 #define NUM_OF_COMM 8			/* number of commands */
 #define WORD_DEVIDER "       "	/* seven spaces between words */
@@ -147,15 +149,15 @@ Arguments:
 	• str_cmf	- string with code morse
 
 Return value: 0 - success, 1 - fail*/
-int translate_cmf_and_print(String  str_cmf);
+int translate_cmf_and_print(String  str_cmf, Morsetree * tree);
 
 /* print_format_name
 -------------------------------------------------------------------------------
 Description: prints format of file to stdout
 
 Arguments:
-	• file_name	- name of file
-
+	• str_cmf	- line of code morse
+	• tree	- structer of morse letters
 Return value: none */
 void print_format_name(String  file_name);
 
@@ -216,7 +218,7 @@ Arguments:
 Return value: 0 - success, 1 - fail */
 int read_line(String  buff, int size, FILE * fp);
 
-/* string_cutter
+/* cut_string
 -------------------------------------------------------------------------------
  Description: cut strings before delimeter
 
@@ -225,31 +227,41 @@ int read_line(String  buff, int size, FILE * fp);
 	• delimiter	- a pointer to the delimetr string
 
  Return value: returns pointer to string after cutting */
-String string_cutter(String  input, String  delimiter);
+String cut_string(String input, String delimiter);
+
+/* clean_string
+-------------------------------------------------------------------------------
+ Description: cut strings before delimeter
+
+ Arguments:
+	• str		- a pointer to the string
+
+ Return value: non */
+void clean_string(String str);
 
 /* word_from_cmf_to_txt
 -------------------------------------------------------------------------------
  Description: translate word of morse code to text
 
  Arguments:
-	• word	- word of morse code
-	• tree	- morse tree
+	• translate	- buffer for traslated word
+	• mcf_word	- word of morse code
+	• tree		- morse tree
 
  Return value: none */
-void word_from_cmf_to_txt(char * word, Morsetree * tree);
+void word_from_cmf_to_txt(String translate, String mcf_word, Morsetree * tree);
 
 /* translate_cmf
 -------------------------------------------------------------------------------
  Description: taranslate morse code from file to text
 
  Arguments:
-	• buffer	- a pointer to buffer with text
-	• size		- a max size of buffer
-	• cmf-file	- a pointer to file with morse code
-	• tree		- a pointer Morse tree
+	• translate		- a pointer to buffer with text
+	• cmf-cmf_line	- a pointer to buffer with morse line
+	• tree			- a pointer Morse tree
 
  Return value: returns Pointer to buffer with text */
-String translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree);
+String translate_cmf(String translate, String cmf_line, Morsetree * tree);
 
 /* read_cmc
 -------------------------------------------------------------------------------
