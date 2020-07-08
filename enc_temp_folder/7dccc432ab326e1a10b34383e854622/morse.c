@@ -528,7 +528,7 @@ String  translate_cmf(String buffer, int size, FILE * cmf_file, Morsetree * tree
 		strcat(buffer, "\n");
 
 	}
-
+	printf(buffer);
 	free(line);
 	free(txt_word);
 
