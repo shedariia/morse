@@ -98,8 +98,20 @@ int check_command(String  sdtin_line, int * argc, char ** argv)
 		// recieve the whole string
 		token = strtok(NULL, "\0");
 
-		argv[i] = (String)malloc((strlen(token) + 1) * sizeof(char));
-		strcpy(argv[i], token);
+		if (token)
+		{
+			argv[i] = (String)malloc((strlen(token) + 1) * sizeof(char));
+
+			if (argv[i])
+			{
+				strcpy(argv[i], token);
+			}
+		}
+		else
+		{
+			printf("line is empty.\n");
+			choise = -1;
+		}
 	}
 	else
 	{
@@ -157,30 +169,37 @@ int load_cmf_and_print_text(int argc, char ** argv, Morsetree * tree)
 	String translate;
 	String cmf_line;
 	
-	if (argc == 2 && (cmf_file = open_file_for_read(argv[1])))
+	if (argc == 2 && strstr(argv[1], ".cmf"))
 	{
-		translate = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
-		cmf_line = (String)calloc(MAX_CMS_LINE, sizeof(char));
-
-		if (translate && cmf_line)
+		if (cmf_file = open_file_for_read(argv[1]))
 		{
+			translate = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
+			cmf_line = (String)calloc(MAX_CMS_LINE, sizeof(char));
 
-			/* Scaninig file and printing */
-			while (read_line(cmf_line, MAX_CMS_LINE, cmf_file))
+			if (translate && cmf_line)
 			{
-				translate_cmf_and_print(cmf_line, tree);
+
+				/* Scaninig file and printing */
+				while (read_line(cmf_line, MAX_CMS_LINE, cmf_file))
+				{
+					translate_cmf_and_print(cmf_line, tree);
+				}
+
+				result = SUCCESS;
 			}
 
-			result = SUCCESS;
+			if (cmf_file) fclose(cmf_file);
+			if (cmf_line) free(cmf_line);
+			if (translate) free(translate);
 		}
-
-		if (cmf_file) fclose(cmf_file);
-		if (cmf_line) free(cmf_line);
-		if (translate) free(translate);
+		else
+		{
+			printf("Text file not found.\n");
+		}
 	}
 	else
 	{
-		printf("You must enter one argument\n");
+		printf("Wrong number of arguments or wrong format of file.\n");
 	}
 
 	return (result);
@@ -195,32 +214,39 @@ int load_cmf_and_save_text(int argc, char ** argv, Morsetree * tree)
 
 	if (argc == 3)
 	{
-		cmf_file = open_file_for_read(argv[1]);
-		txt_file = open_file_for_write(argv[2]);
-		cmf_line = (String)calloc(MAX_CMS_LINE, sizeof(char));
-		translate = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
-
-		if (cmf_file && txt_file)
+		if (strstr(argv[1], ".cmf") && strstr(argv[2], ".txt"))
 		{
-			if (cmf_line && translate) 
-			{
-				/* Scaning file and writing to another file */
-				while (read_line(cmf_line, MAX_CMS_LINE, cmf_file)) {
-					fprintf(txt_file, "%s", translate_cmf(translate, cmf_line, tree));
-					clean_string(translate);
-				}
-				result = SUCCESS;
-			}
-		}
+			cmf_file = open_file_for_read(argv[1]);
+			txt_file = open_file_for_write(argv[2]);
+			cmf_line = (String)calloc(MAX_CMS_LINE, sizeof(char));
+			translate = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
 
-		if (cmf_file) fclose(cmf_file);
-		if (txt_file) fclose(txt_file);
-		if (cmf_line) free(cmf_line);
-		if (translate) free(translate);
+			if (cmf_file && txt_file)
+			{
+				if (cmf_line && translate)
+				{
+					/* Scaning file and writing to another file */
+					while (read_line(cmf_line, MAX_CMS_LINE, cmf_file)) {
+						fprintf(txt_file, "%s", translate_cmf(translate, cmf_line, tree));
+						clean_string(translate);
+					}
+					result = SUCCESS;
+				}
+			}
+
+			if (cmf_file) fclose(cmf_file);
+			if (txt_file) fclose(txt_file);
+			if (cmf_line) free(cmf_line);
+			if (translate) free(translate);
+		}
+		else
+		{
+			printf("Wrong format of file.\n");
+		}
 	}
 	else
 	{
-		printf("You must enter two arguments\n");
+		printf("You must enter two arguments or files not found.\n");
 	}
 
 	return (result);
@@ -234,21 +260,28 @@ int load_text_and_translate_cmf_and_print(int argc, char ** argv)
 
 	if (argc == 2)
 	{
-		txt_file = open_file_for_read(argv[1]);
-		buffer = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
-
-		if (txt_file && buffer)
+		if (strstr(argv[1], ".txt"))
 		{
-			while (!feof(txt_file))
-			{
-				fgets(buffer, MAX_LENGTH, txt_file);
-				printf("%s", from_txt_to_cmf_line(buffer));
-			}
-			result = SUCCESS;
-		}
+			txt_file = open_file_for_read(argv[1]);
+			buffer = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
 
-		if (txt_file) fclose(txt_file);
-		if (buffer) free(buffer);
+			if (txt_file && buffer)
+			{
+				while (!feof(txt_file))
+				{
+					fgets(buffer, MAX_LENGTH, txt_file);
+					printf("%s", from_txt_to_cmf_line(buffer));
+				}
+				result = SUCCESS;
+			}
+
+			if (txt_file) fclose(txt_file);
+			if (buffer) free(buffer);
+		}
+		else
+		{
+			printf("Wrong format of file.\n");
+		}
 	}
 	else
 	{
@@ -266,31 +299,38 @@ int load_text_and_save_cmf(int argc, char ** argv)
 
 	if (argc == 3)
 	{
-		txt_file = open_file_for_read(argv[1]);
-		cmf_file = open_file_for_write(argv[2]);
-		traslation = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
-
-		if (txt_file && cmf_file && traslation)
+		if (strstr(argv[2], ".cmf") && strstr(argv[1], ".txt"))
 		{
-			
-			while (!feof(txt_file))
+			txt_file = open_file_for_read(argv[1]);
+			cmf_file = open_file_for_write(argv[2]);
+			traslation = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
+
+			if (txt_file && cmf_file && traslation)
 			{
-				fgets(traslation, MAX_LENGTH, txt_file);
-				fprintf(cmf_file, "%s", from_txt_to_cmf_line(traslation));
-				clean_string(traslation);
+
+				while (!feof(txt_file))
+				{
+					fgets(traslation, MAX_LENGTH, txt_file);
+					fprintf(cmf_file, "%s", from_txt_to_cmf_line(traslation));
+					clean_string(traslation);
+				}
+
+				result = SUCCESS;
 			}
 
-			result = SUCCESS;
+			if (txt_file) fclose(txt_file);
+			if (cmf_file) fclose(cmf_file);
+			if (traslation) free(traslation);
+
 		}
-
-		if (txt_file) fclose(txt_file);
-		if (cmf_file) fclose(cmf_file);
-		if (traslation) free(traslation);
-
+		else
+		{
+			printf("Wrong format of file.\n");
+		}
 	}
 	else
 	{
-		printf("You must enter one argument\n");
+		printf("You must enter two arguments\n");
 	}
 
 	return (result);
@@ -375,17 +415,40 @@ int translate_cmf_and_print(String str_cmf, Morsetree * tree)
 	int result = FAILURE;
 	String translate;
 
-	if (*str_cmf)
+	if (is_code_morse(str_cmf))
 	{
-		translate = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
-
-		if (translate)
+		if (*str_cmf)
 		{
-			printf("%s", translate_cmf(translate, str_cmf, tree));
-			result = SUCCESS;
-			free(translate);
+			translate = (String)calloc(MAX_CMS_LENGTH, sizeof(char));
+
+			if (translate)
+			{
+				printf("%s", translate_cmf(translate, str_cmf, tree));
+				result = SUCCESS;
+				free(translate);
+			}
 		}
 	}
+	else
+	{
+		printf("It is not morse code.\n");
+	}
+
+	return (result);
+}
+
+int is_code_morse(String str)
+{
+	int result = SUCCESS, i;
+
+	for (i = 0; i < strlen(str) && result; ++i)
+	{
+		if (str[i] != '-' && str[i] != '*' && str[i] != ' ')
+		{
+			result = FAILURE;
+		}
+	}
+
 	return (result);
 }
 
@@ -429,7 +492,7 @@ void add_symbol_to_tree(Morsetree * tree, String morse_code, char lat_symbol)
 	int i, len;
 
 	tmp_tree = tree;
-	len = strlen(morse_code);
+	len = (int)strlen(morse_code);
 
 	for (i = 0; i < len; i++)
 	{
@@ -545,7 +608,8 @@ String  translate_cmf(String translate, String cmf_line, Morsetree * tree)
 	String cms_word, q1;
 	String txt_word = (String)calloc(MAX_LENGTH, sizeof(char));
 
-	if (txt_word) {
+	if (txt_word) 
+	{
 		// split line into words
 		for (q1 = cmf_line; (cms_word = cut_string(q1, WORD_DEVIDER)) != NULL; q1 = NULL)
 		{
@@ -584,7 +648,8 @@ String cut_string(String input, String delimiter)
 	return temp;
 }
 
-void clean_string(String str) {
+void clean_string(String str) 
+{
 	String p = str;
 
 	while (*p) {
@@ -652,7 +717,14 @@ char read_cmc(Morsetree *tree, String morse)
 		}
 	}
 
-	symbol = curr->symbol;
+	if (curr)
+	{
+		symbol = curr->symbol;
+	}
+	else
+	{
+		symbol = '?';
+	}
 
 	return (symbol);
 }

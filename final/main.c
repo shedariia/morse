@@ -46,7 +46,7 @@ void main(void)
 			quit(argc, argv);
 			break;
 		default:
-			printf("...error\n");
+			printf("... error.\n");
 			break;
 		}
 	} 

@@ -284,6 +284,8 @@ char read_cmc(Morsetree * tree, String  morse);
  Return value: line after translation */
 String from_txt_to_cmf_line(String str_txt);
 
+int is_code_morse(String str);
+
 /* initialization of old standart function */
 String gets(String str);
 
